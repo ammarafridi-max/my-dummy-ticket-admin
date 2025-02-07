@@ -1,11 +1,9 @@
-import styled from "styled-components";
+import styled from 'styled-components';
+import Button from './Button';
 
-const StyledButton = styled.button`
+const StyledButton = styled(Button)`
   color: white;
   background-color: darkgreen;
-  border: none;
-  border-radius: 5px;
-  padding: 10px 20px;
   margin-top: ${({ mt }) => mt};
   margin-bottom: ${({ mb }) => mb};
   margin-left: ${({ ml }) => ml};

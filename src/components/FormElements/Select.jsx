@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 const StyledSelect = styled.select`
-  background-color: var(--grey-color-200);
+  background-color: var(--grey-color-100);
   box-sizing: border-box;
   outline: none;
   border: none;

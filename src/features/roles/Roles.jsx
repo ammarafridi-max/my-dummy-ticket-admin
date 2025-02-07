@@ -1,10 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import { useRoles } from './useRoles';
 import styled from 'styled-components';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
 import Table from '../../components/Table/Table';
 import PageHeading from '../../components/Typography/PageHeading';
-import { baseURL } from '../../utils/baseUrl';
 
 const CreateButton = styled.div`
   position: fixed;
@@ -14,18 +13,7 @@ const CreateButton = styled.div`
 
 export default function Roles() {
   const navigate = useNavigate();
-  const { data } = useQuery({
-    queryKey: ['roles'],
-    queryFn: async () => {
-      try {
-        const res = await fetch(`${baseURL}/api/roles`);
-        const data = await res.json();
-        return data.data;
-      } catch (error) {
-        alert(error.message);
-      }
-    },
-  });
+  const { roles } = useRoles();
 
   return (
     <>
@@ -36,8 +24,8 @@ export default function Roles() {
           <Table.Heading textAlign="left">Slug</Table.Heading>
           <Table.Heading textAlign="left">Permissions</Table.Heading>
         </Table.Head>
-        {data?.map((item) => (
-          <Table.Row>
+        {roles?.map((item) => (
+          <Table.Row href={`/roles/${item.slug}`}>
             <Table.Item textAlign="left">{item.name}</Table.Item>
             <Table.Item textAlign="left">/{item.slug}</Table.Item>
             <Table.Item textAlign="left">

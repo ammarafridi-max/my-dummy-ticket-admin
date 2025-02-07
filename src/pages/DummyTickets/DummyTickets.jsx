@@ -33,7 +33,7 @@ function FilterBar({ searchQuery, onSearchChange }) {
 export default function DummyTickets() {
   const [searchQuery, setSearchQuery] = useState('');
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['dummy-tickets'],
+    queryKey: ['dummytickets'],
     queryFn: async () => {
       try {
         const res = await fetch(`${baseURL}/api/admin/tickets`);

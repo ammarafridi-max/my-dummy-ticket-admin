@@ -19,10 +19,11 @@ const StyledOverlay = styled.div`
 `;
 
 const StyledWindow = styled.div`
-  height: 90vh;
-  width: 80%;
-  padding: 50px;
-  box-sizing: border-box;
+  min-height: 10vh;
+  max-height: 90vh;
+  max-width: 80%;
+  min-width: 20%;
+  box-sizing: content-box;
   background-color: white;
   border-radius: 10px;
   overflow: scroll;
@@ -50,14 +51,11 @@ const Button = styled.button`
   & svg {
     width: 2.4rem;
     height: 2.4rem;
-    /* Sometimes we need both */
-    /* fill: var(--color-grey-500);
-    stroke: var(--color-grey-500); */
     color: var(--color-grey-500);
   }
 `;
 
-const ModalContext = createContext();
+export const ModalContext = createContext();
 
 function Modal({ children }) {
   const [openWindowName, setOpenWindowName] = useState('');

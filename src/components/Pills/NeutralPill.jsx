@@ -5,8 +5,8 @@ export const StyledNeutralPill = styled.p`
   height: fit-content;
   font-size: 12px;
   font-weight: 800;
-  color: rgb(100, 100, 100);
-  background-color: rgb(230, 230, 230);
+  color: var(--grey-color-900);
+  background-color: var(--grey-color-200);
   border-radius: 100px;
   padding: 5px 20px;
   text-align: center;

@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Assistant:wght@200..800&family=Host+Grotesk:ital,wght@0,300..800;1,300..800&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@200..800&family=Host+Grotesk:ital,wght@0,300..800;1,300..800&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
 
 :root {
   --primary-color-500: #20b2aa;
@@ -8,15 +8,21 @@
   --primary-color-900: #0b3e3b;
   --grey-color-100: rgb(245, 245, 245);
   --grey-color-200: rgb(235, 235, 235);
-  --grey-color-300: rgb(225, 225, 225);
-  --grey-color-400: rgb(215, 215, 215);
-  --grey-color-500: rgb(205, 205, 205);
+  --grey-color-300: rgb(220, 220, 220);
+  --grey-color-400: rgb(205, 205, 205);
+  --grey-color-500: rgb(190, 190, 190);
+  --grey-color-600: rgb(170, 170, 170);
+  --grey-color-700: rgb(150, 150, 150);
+  --grey-color-800: rgb(130, 130, 130);
+  --grey-color-900: rgb(110, 110, 110);
+  --danger-color: red;
+  --success-color: green;
 }
 
 * {
   padding: 0;
   margin: 0;
-  font-family: "Host Grotesk";
+  font-family: 'Urbanist';
 }
 
 /* Margin */

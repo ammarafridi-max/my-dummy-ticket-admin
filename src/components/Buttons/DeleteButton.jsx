@@ -1,11 +1,10 @@
-import styled from "styled-components";
+import styled from 'styled-components';
+import Button from './Button';
+import PrimaryButton from './PrimaryButton';
 
-const StyledButton = styled.button`
+const StyledButton = styled(Button)`
   color: white;
-  background-color: red;
-  border: none;
-  border-radius: 5px;
-  padding: 10px 20px;
+  background-color: var(--danger-color);
   margin-top: ${({ mt }) => mt};
   margin-bottom: ${({ mb }) => mb};
   margin-left: ${({ ml }) => ml};

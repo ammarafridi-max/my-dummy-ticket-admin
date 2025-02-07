@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { baseURL } from '../../utils/baseUrl';
 import Checkbox from '../../components/FormElements/Checkbox';
 import InputWithLabel from '../../components/FormElements/InputWithLabel';
@@ -8,8 +8,12 @@ import PageHeading from '../../components/Typography/PageHeading';
 import SectionHeading from '../../components/Typography/SectionHeading';
 import SectionSubheading from '../../components/Typography/SectionSubheading';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
+import { useParams } from 'react-router-dom';
 
 export default function CreateRole() {
+  const { slug: pageSlug } = useParams();
+  const endpoint = pageSlug ? `${baseURL}/api/roles/${pageSlug}` : `${baseURL}/api/roles`;
+
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
   const [permissions, setPermissions] = useState({
@@ -52,9 +56,8 @@ export default function CreateRole() {
     try {
       e.preventDefault();
       const data = { name, slug, permissions };
-      console.log(data);
-      const res = await fetch(`${baseURL}/api/roles`, {
-        method: 'post',
+      const res = await fetch(endpoint, {
+        method: pageSlug ? 'put' : 'post',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
@@ -65,6 +68,23 @@ export default function CreateRole() {
       alert(error.message);
     }
   }
+
+  useEffect(() => {
+    if (pageSlug) {
+      async function fetchRoleData() {
+        try {
+          const res = await fetch(`${baseURL}/api/roles/${pageSlug}`);
+          const data = await res.json();
+          setName(data.data.name);
+          setSlug(data.data.slug);
+          setPermissions(data.data.permissions);
+        } catch (error) {
+          alert(error.message);
+        }
+      }
+      fetchRoleData();
+    }
+  }, [pageSlug]);
 
   return (
     <>
@@ -88,7 +108,7 @@ export default function CreateRole() {
         Permissions
       </SectionHeading>
 
-      <Row justifyContent="left" alignItems="top" gap="20px" mb="30px">
+      <Row justifyContent="left" alignItems="top" gap="20px" mb="20px">
         <Div width="33%">
           <SectionSubheading mb="15px">Dummy Tickets</SectionSubheading>
           <Row flexDirection="column" alignItems="top">
@@ -195,7 +215,9 @@ export default function CreateRole() {
             </label>
           </Row>
         </Div>
+      </Row>
 
+      <Row mb="30px">
         <Div width="33%">
           <SectionSubheading mb="20px">Other</SectionSubheading>
           <Row flexDirection="column" alignItems="top">

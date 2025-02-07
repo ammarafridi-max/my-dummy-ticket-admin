@@ -1,18 +1,13 @@
 import styled from 'styled-components';
+import Button from './Button';
 
-const StyledButton = styled.button`
+const StyledButton = styled(Button)`
   color: white;
-  font-size: 16px;
   background-color: var(--primary-color-500);
-  border: none;
-  border-radius: 5px;
-  padding: 10px 20px;
   margin-top: ${({ mt }) => mt};
   margin-bottom: ${({ mb }) => mb};
   margin-left: ${({ ml }) => ml};
   margin-right: ${({ mr }) => mr};
-  cursor: pointer;
-  transition-duration: 0.3s;
 
   &:hover {
     background-color: var(--primary-color-600);

@@ -15,12 +15,13 @@ const StyledHead = styled.div`
 
 const StyledHeading = styled.p`
   font-weight: 600;
-  font-size: 14px;
-  text-align: center;
+  font-size: 15px;
   text-align: ${({ textAlign = 'center' }) => textAlign};
 `;
 
 const StyledRow = styled.a`
+  color: black;
+  text-decoration: none;
   display: grid;
   grid-template-columns: ${({ columnTemplate }) => columnTemplate};
   gap: 10px;
@@ -36,7 +37,7 @@ const StyledRow = styled.a`
 `;
 
 const StyledItem = styled.p`
-  font-size: 13px;
+  font-size: 15px;
   text-align: ${({ textAlign = 'center' }) => textAlign};
   text-transform: ${({ textTransform = 'none' }) => textTransform};
 `;
@@ -48,10 +49,10 @@ function Head({ children }) {
   return <StyledHead columnTemplate={columnTemplate}>{children}</StyledHead>;
 }
 
-function Row({ children, onClick }) {
+function Row({ children, onClick, href }) {
   const { columnTemplate } = useContext(TableContext);
   return (
-    <StyledRow onClick={onClick} columnTemplate={columnTemplate}>
+    <StyledRow href={href} onClick={onClick} columnTemplate={columnTemplate}>
       {children}
     </StyledRow>
   );

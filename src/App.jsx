@@ -9,9 +9,9 @@ import Login from './pages/Login/Login';
 import PrivateRoutes from './pages/PrivateRoutes/PrivateRoutes';
 
 // Users
-import Users from './pages/Users/Users';
+import Users from './features/users/Users';
 import ReadUser from './pages/ReadUser/ReadUser';
-import CreateUser from './pages/CreateUser/CreateUser';
+import CreateUser from './features/users/CreateUser';
 
 // Roles
 import Roles from './features/roles/Roles';
@@ -44,10 +44,11 @@ export default function App() {
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="dummy-tickets" element={<DummyTickets />} />
               <Route path="users" element={<Users />} />
-              <Route path="users/:username" element={<ReadUser />} />
               <Route path="users/create" element={<CreateUser />} />
+              <Route path="users/:username" element={<CreateUser />} />
               <Route path="roles" element={<Roles />} />
               <Route path="roles/create" element={<CreateRole />} />
+              <Route path="roles/:slug" element={<CreateRole />} />
             </Route>
           </Routes>
         </BrowserRouter>

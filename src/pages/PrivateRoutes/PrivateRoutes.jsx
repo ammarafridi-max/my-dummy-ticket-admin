@@ -6,7 +6,7 @@ export default function PrivateRoutes({ children }) {
   const { user, isLoading } = useContext(AuthContext);
 
   if (isLoading) {
-    return <div>Loading...</div>; // Show a loading indicator while checking the user state
+    return <div></div>; // Show a loading indicator while checking the user state
   }
 
   return user ? children : <Navigate to="/login" />;

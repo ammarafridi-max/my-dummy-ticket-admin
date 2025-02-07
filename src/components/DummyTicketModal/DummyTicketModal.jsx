@@ -1,9 +1,8 @@
 import { useContext } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { baseURL } from '../../utils/baseUrl';
 import { formatDateShort } from '../../utils/formatDateShort';
 import { formatMongoDBDate } from '../../utils/formatMongoDBDate';
-import { HiOutlineXMark } from 'react-icons/hi2';
 import { FaPlaneDeparture, FaPlaneArrival, FaUser, FaInfo } from 'react-icons/fa6';
 import { AuthContext } from '../../context/AuthContext';
 import styled from 'styled-components';
@@ -15,23 +14,23 @@ import SuccessPill from '../Pills/SuccessPill';
 import NeutralPill from '../Pills/NeutralPill';
 import SectionHeading from '../Typography/SectionHeading';
 import DangerPill from '../Pills/DangerPill';
+import { ModalContext } from '../Modal/Modal';
 
 const StyledContainer = styled.div`
   height: 100%;
+  width: 800px;
   background-color: transparent;
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
+  padding: 50px;
 `;
 
-// const StyledHeader = styled.div`
-//   display: flex;
-//   justify-content: space-between;
-//   gap: 30px;
-// `;
+const StyledHeader = styled.div``;
 
 const StyledBody = styled.div`
-  border-radius: 20px;
+  margin: 20px 0;
+  padding: 30px;
+  background-color: var(--grey-color-100);
+  /* border: 1px solid var(--grey-color-200); */
+  border-radius: 10px;
   &::-webkit-scrollbar {
     display: none;
   }
@@ -51,6 +50,8 @@ const StyledReturn = styled.div`
 
 export default function DummyTicketModal({ data }) {
   const { user } = useContext(AuthContext);
+  const { close } = useContext(ModalContext);
+  const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: async ({ method, orderStatus }) => {
       const url = `${baseURL}/api/admin/tickets/${data.sessionId}`;
@@ -65,7 +66,8 @@ export default function DummyTicketModal({ data }) {
       return res.json();
     },
     onSuccess: () => {
-      alert('Operation successful');
+      queryClient.invalidateQueries({ queryKey: ['dummy-tickets'] });
+      close();
     },
     onError: (error) => {
       alert(error.message);
@@ -76,19 +78,21 @@ export default function DummyTicketModal({ data }) {
   const updateStatus = (orderStatus) => mutation.mutate({ method: 'PUT', orderStatus });
 
   return (
-    <StyledContainer onClick={(e) => e.stopPropagation()}>
-      <Header data={data} />
-      <Body data={data} />
-      <Footer handleDeleteItem={handleDeleteItem} updateStatus={updateStatus} />
-    </StyledContainer>
+    <ModalContext.Provider>
+      <StyledContainer onClick={(e) => e.stopPropagation()}>
+        <Header data={data} />
+        <Body data={data} />
+        <Footer handleDeleteItem={handleDeleteItem} updateStatus={updateStatus} />
+      </StyledContainer>
+    </ModalContext.Provider>
   );
 }
 
 const Header = ({ data }) => {
   return (
-    <div>
+    <StyledHeader>
       <SectionHeading mb="10px">
-        Dummy Ticket Application For{' '}
+        Dummy Ticket For{' '}
         {`${data?.passengers[0].title} ${data?.passengers[0].firstName} ${data?.passengers[0].lastName}`}
       </SectionHeading>
 
@@ -105,7 +109,7 @@ const Header = ({ data }) => {
           data?.orderStatus === 'DELIVERED' && <SuccessPill>DELIVERED</SuccessPill>
         )}
       </Row>
-    </div>
+    </StyledHeader>
   );
 };
 
