@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Nata+Sans:wght@100..900&family=Outfit:wght@100..900&display=swap');
+@import 'tailwindcss';
+
+* {
+  box-sizing: border-box;
+  font-family: 'Outfit';
+}
+
+:root {
+  --primary-color-500: #20b2aa;
+  --primary-color-600: #1a918a;
+  --primary-color-700: #146f6a;
+  --primary-color-800: #0e4e4b;
+  --primary-color-900: #0b3e3b;
+  --grey-color-100: rgb(245, 245, 245);
+  --grey-color-200: rgb(235, 235, 235);
+  --grey-color-300: rgb(220, 220, 220);
+  --grey-color-400: rgb(205, 205, 205);
+  --grey-color-500: rgb(190, 190, 190);
+  --grey-color-600: rgb(170, 170, 170);
+  --grey-color-700: rgb(150, 150, 150);
+  --grey-color-800: rgb(130, 130, 130);
+  --grey-color-900: rgb(110, 110, 110);
+  --danger-color-500: rgb(255, 0, 0);
+  --danger-color-600: rgb(210, 0, 0);
+  --success-color: green;
+}
+
+@theme {
+  --color-primary-50: #f4f7fa; /* Very light grey with a subtle blue hint */
+  --color-primary-100: #e5eef8;
+  --color-primary-200: #b8ecea;
+  --color-primary-300: #89e0de;
+  --color-primary-400: #56d0cd;
+  --color-primary-500: #1fb7ae; /* Base */
+  --color-primary-600: #1aa298;
+  --color-primary-700: #168d83;
+  --color-primary-800: #12796f;
+  --color-primary-900: #0e655d;
+  --color-accent-50: #e2f7fb;
+  --color-accent-100: #ffece8;
+  --color-accent-200: #ffd0c5;
+  --color-accent-300: #ffb3a1;
+  --color-accent-400: #ff8f75;
+  --color-accent-500: #ff603a; /* Base */
+  --color-accent-600: #e7441d;
+  --color-accent-700: #c42700;
+  --color-accent-800: #a12000;
+  --color-accent-900: #701700;
+  --font-nunito: 'Nunito Variable';
+  --font-merriweather: 'Merriweather';
+  --rounded-input-sm: 5px;
+  --rounded-input-md: 8px;
+  --rounded-input-lg: 10px;
+}
