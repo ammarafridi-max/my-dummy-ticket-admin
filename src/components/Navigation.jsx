@@ -4,11 +4,11 @@ import {
   HiOutlineHome,
   HiArrowRightOnRectangle,
   HiOutlineUser,
+  HiOutlineRss,
 } from 'react-icons/hi2';
 import { NavLink, useLocation } from 'react-router-dom';
 import { PiAirplane } from 'react-icons/pi';
-import { useLogout } from '../features/auth/useLogout';
-import { useJwtData } from '../services/jwt';
+import { useLogout } from '../features/auth/hooks/useLogout';
 
 const links = [
   {
@@ -23,13 +23,19 @@ const links = [
     icon: HiOutlineTicket,
     accessTo: ['admin', 'agent'],
   },
-  { name: 'Users', href: '/users', icon: HiOutlineUsers, accessTo: ['admin'] },
   {
-    name: 'Airlines',
-    href: '/airlines',
-    icon: PiAirplane,
-    accessTo: ['admin'],
+    name: 'Blogs',
+    href: '/blogs',
+    icon: HiOutlineRss,
+    accessTo: ['admin', 'agent'],
   },
+  { name: 'Users', href: '/users', icon: HiOutlineUsers, accessTo: ['admin'] },
+  // {
+  //   name: 'Airlines',
+  //   href: '/airlines',
+  //   icon: PiAirplane,
+  //   accessTo: ['admin'],
+  // },
   {
     name: 'My Account',
     href: '/account',
@@ -45,22 +51,15 @@ const links = [
 ];
 
 function SidebarLink({ name, href, Icon, accessTo, action }) {
-  const jwtData = useJwtData();
   const { pathname } = useLocation();
   const isActive = href && pathname.startsWith(href);
-  const isAllowed = jwtData && accessTo?.includes(jwtData?.role);
   const { logout } = useLogout();
 
   if (action === 'logout') {
     return (
       <button
         onClick={() => logout()}
-        disabled={!isAllowed}
-        className={`w-full flex items-center gap-2.5 font-light text-xl p-2.5 mb-1.25 rounded-sm duration-150 hover:bg-gray-100 hover:text-black cursor-pointer ${
-          !isAllowed
-            ? 'opacity-50 cursor-not-allowed'
-            : 'bg-transparent text-white'
-        }`}
+        className={`w-full flex items-center gap-2.5 font-light text-xl p-2.5 mb-1.25 rounded-sm duration-150 hover:bg-gray-100 hover:text-black cursor-pointer bg-transparent text-white`}
       >
         <Icon className="w-5 h-5" />
         <span className="text-[15px]">{name}</span>
@@ -70,10 +69,10 @@ function SidebarLink({ name, href, Icon, accessTo, action }) {
 
   return (
     <NavLink
-      to={isAllowed ? href : '#'}
+      to={href}
       className={`flex items-center gap-2.5 font-light text-xl p-2.5 mb-1.25 rounded-sm duration-150 hover:bg-gray-100 hover:text-black ${
         isActive ? 'bg-gray-100 text-black' : 'bg-transparent text-white'
-      } ${!isAllowed ? 'opacity-50' : ''}`}
+      }`}
     >
       <Icon className="w-5 h-5" />
       <span className="text-[15px]">{name}</span>
@@ -86,14 +85,7 @@ export default function Navigation() {
     <div className="h-full bg-gray-900 p-4 flex flex-col justify-center">
       <div>
         {links.map((link, i) => (
-          <SidebarLink
-            key={i}
-            name={link.name}
-            href={link.href}
-            Icon={link.icon}
-            accessTo={link.accessTo}
-            action={link.action}
-          />
+          <SidebarLink key={i} name={link.name} href={link.href} Icon={link.icon} accessTo={link.accessTo} action={link.action} />
         ))}
       </div>
     </div>
