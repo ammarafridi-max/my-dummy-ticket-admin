@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useJwtData } from '../../services/jwt';
 import { MdClose } from 'react-icons/md';
+import { useJwtData } from '../../../services/jwt';
 
 export default function Filter() {
   const [activeFilterBox, setActiveFilterBox] = useState('');

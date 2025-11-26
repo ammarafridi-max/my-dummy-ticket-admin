@@ -1,4 +1,4 @@
-import UserForm from './UserForm';
+import UserForm from '../components/UserForm';
 
 export default function UpdateUser() {
   return <UserForm type="update" />;

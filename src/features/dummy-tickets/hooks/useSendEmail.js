@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { sendEmailApi } from '../../services/apiEmail';
+import { sendEmailApi } from '../../../services/apiEmail';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useUpdateDummyTicket } from '../dummyTickets/useUpdateDummyTicket';
+import { useUpdateDummyTicket } from './useUpdateDummyTicket';
 import toast from 'react-hot-toast';
 
 export function useSendEmail() {
@@ -20,7 +20,7 @@ export function useSendEmail() {
         sessionId: searchParams.get('sessionId'),
         orderStatus: 'DELIVERED',
       });
-      navigate('/dummy-tickets');
+      navigate('/mdt/dummy-tickets');
     },
 
     onError: () => {

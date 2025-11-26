@@ -1,33 +1,22 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useDummyTickets } from './useDummyTickets';
-import { extractIataCode } from '../../utils/extractIataCode';
-import { convertToDubaiDate } from '../../utils/dateFunctions';
+import { useDummyTickets } from '../hooks/useDummyTickets';
+import { extractIataCode } from '../../../utils/extractIataCode';
+import { convertToDubaiDate } from '../../../utils/dateFunctions';
 import { useSearchParams } from 'react-router-dom';
-import PageHeading from '../../components/PageHeading';
-import Table from '../../components/Table';
-import SuccessPill from '../../components/SuccessPill';
-import NeutralPill from '../../components/NeutralPill';
-import DangerPill from '../../components/DangerPill';
-import WarningPill from '../../components/WarningPill';
-import Filter from './Filter';
-import Breadcrumb from '../../components/Breadcrumb';
-import Loading from '../../components/Loading';
-import { FaStar } from 'react-icons/fa6';
-import { Tooltip } from 'react-tooltip';
-import { useUpdateDummyTicket } from './useUpdateDummyTicket';
-import { useJwtData } from '../../services/jwt';
+import PageHeading from '../../../components/PageHeading';
+import Table from '../../../components/Table';
+import SuccessPill from '../../../components/SuccessPill';
+import NeutralPill from '../../../components/NeutralPill';
+import DangerPill from '../../../components/DangerPill';
+import WarningPill from '../../../components/WarningPill';
+import Filter from './../components/Filter';
+import Breadcrumb from '../../../components/Breadcrumb';
+import Loading from '../../../components/Loading';
 
 export default function DummyTickets() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const jwtData = useJwtData();
-  const { updateDummyTicket, isUpdating } = useUpdateDummyTicket();
-  const {
-    dummyTickets,
-    pagination,
-    isLoadingDummyTickets,
-    isErrorDummyTickets,
-  } = useDummyTickets();
+  const { dummyTickets, pagination, isLoadingDummyTickets, isErrorDummyTickets } = useDummyTickets();
 
   const currentPage = parseInt(searchParams.get('page')) || 1;
   const limit = parseInt(searchParams.get('limit')) || 100;
@@ -73,8 +62,7 @@ export default function DummyTickets() {
                 <Table.Item textAlign="left" textTransform="capitalize">
                   {`${item?.leadPassenger}`.toLowerCase()}
                   <span className="text-[12px] text-gray-400 lowercase">
-                    {item?.passengers?.length > 1 &&
-                      `and ${item?.passengers?.length - 1} other(s)`}
+                    {item?.passengers?.length > 1 && `and ${item?.passengers?.length - 1} other(s)`}
                   </span>
                 </Table.Item>
                 <Table.Item>
@@ -118,12 +106,9 @@ export default function DummyTickets() {
               <div>
                 {pagination ? (
                   <p>
-                    Showing{' '}
-                    {pagination.total > 0 ? (currentPage - 1) * limit + 1 : 0} -{' '}
-                    {pagination.total > 0
-                      ? Math.min(currentPage * limit, pagination.total)
-                      : 0}{' '}
-                    of {pagination.total} results
+                    Showing {pagination.total > 0 ? (currentPage - 1) * limit + 1 : 0} -{' '}
+                    {pagination.total > 0 ? Math.min(currentPage * limit, pagination.total) : 0} of {pagination.total}{' '}
+                    results
                   </p>
                 ) : (
                   <p>Loading...</p>
@@ -131,19 +116,13 @@ export default function DummyTickets() {
               </div>
 
               <div className="flex items-center gap-3">
-                <PageButton
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={!pagination?.hasPrevPage}
-                >
+                <PageButton onClick={() => handlePageChange(currentPage - 1)} disabled={!pagination?.hasPrevPage}>
                   Previous Page
                 </PageButton>
                 <span className="font-extralight">
                   {currentPage} / {pagination?.totalPages || 1}
                 </span>
-                <PageButton
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={!pagination?.hasNextPage}
-                >
+                <PageButton onClick={() => handlePageChange(currentPage + 1)} disabled={!pagination?.hasNextPage}>
                   Next Page
                 </PageButton>
               </div>

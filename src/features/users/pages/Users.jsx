@@ -1,16 +1,16 @@
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
-import { useJwtData } from '../../services/jwt';
-import toast from 'react-hot-toast';
+import { useJwtData } from '../../../services/jwt';
+import { useUsers } from '../hooks/useUsers';
 import { FaPlus } from 'react-icons/fa6';
-import { useUsers } from './useUsers';
-import DangerPill from '../../components/DangerPill';
-import SuccessPill from '../../components/SuccessPill';
-import Table from '../../components/Table';
-import PageHeading from '../../components/PageHeading';
-import Breadcrumb from '../../components/Breadcrumb';
-import Loading from '../../components/Loading';
+import toast from 'react-hot-toast';
+import DangerPill from '../../../components/DangerPill';
+import SuccessPill from '../../../components/SuccessPill';
+import Table from '../../../components/Table';
+import PageHeading from '../../../components/PageHeading';
+import Breadcrumb from '../../../components/Breadcrumb';
+import Loading from '../../../components/Loading';
 
 export default function Users() {
   const { users, isLoadingUsers } = useUsers();
@@ -47,22 +47,13 @@ export default function Users() {
           <Table.Heading>Status</Table.Heading>
         </Table.Head>
         {users?.map((user, i) => (
-          <Table.Row
-            key={i}
-            href={
-              jwtData.id === user._id ? `account` : `/users/${user.username}`
-            }
-          >
+          <Table.Row key={i} href={jwtData.id === user._id ? `account` : `/users/${user.username}`}>
             <Table.Item textAlign="left">{user.name}</Table.Item>
             <Table.Item textAlign="left">{user.username}</Table.Item>
             <Table.Item textAlign="left">{user.email}</Table.Item>
             <Table.Item textTransform="capitalize">{user.role}</Table.Item>
             <Table.Item textAlign="center">
-              {user.status === 'ACTIVE' ? (
-                <SuccessPill>{user.status}</SuccessPill>
-              ) : (
-                <DangerPill>{user.status}</DangerPill>
-              )}
+              {user.status === 'ACTIVE' ? <SuccessPill>{user.status}</SuccessPill> : <DangerPill>{user.status}</DangerPill>}
             </Table.Item>
           </Table.Row>
         ))}

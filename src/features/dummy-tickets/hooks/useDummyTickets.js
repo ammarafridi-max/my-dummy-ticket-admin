@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getDummyTicketsApi } from '../../services/apiDummyTickets';
+import { getDummyTicketsApi } from '../services/apiDummyTickets';
 import { useSearchParams } from 'react-router-dom';
 
 export function useDummyTickets() {

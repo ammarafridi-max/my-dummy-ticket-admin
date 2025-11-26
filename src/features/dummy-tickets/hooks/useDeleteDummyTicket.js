@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { deleteDummyTicketApi } from '../../services/apiDummyTickets';
+import { deleteDummyTicketApi } from '../services/apiDummyTickets';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 

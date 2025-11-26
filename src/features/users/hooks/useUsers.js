@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getUsers } from '../../services/apiUsers';
+import { getUsers } from '../services/apiUsers';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 

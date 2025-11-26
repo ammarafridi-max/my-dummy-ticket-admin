@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getDummyTicketApi } from '../../services/apiDummyTickets';
+import { getDummyTicketApi } from '../services/apiDummyTickets';
 
 export function useGetDummyTicket(sessionId) {
   const {

@@ -1,21 +1,21 @@
 import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useJwtData } from '../../services/jwt';
+import { useJwtData } from '../../../services/jwt';
 import toast from 'react-hot-toast';
-import Breadcrumb from '../../components/Breadcrumb';
-import FormRow from '../../components/FormElements/FormRow';
-import Input from '../../components/FormElements/Input';
-import Label from '../../components/FormElements/Label';
-import PageHeading from '../../components/PageHeading';
-import Select from '../../components/FormElements/Select';
-import PrimaryButton from '../../components/Buttons/PrimaryButton';
-import DeleteButton from '../../components/Buttons/DeleteButton';
-import Loading from '../../components/Loading';
-import { useDeleteUser } from './useDeleteUser';
-import { useUpdateUser } from './useUpdateUser';
-import { useCreateUser } from './useCreateUser';
-import { useGetUser } from './useGetUser';
+import Breadcrumb from '../../../components/Breadcrumb';
+import FormRow from '../../../components/FormElements/FormRow';
+import Input from '../../../components/FormElements/Input';
+import Label from '../../../components/FormElements/Label';
+import PageHeading from '../../../components/PageHeading';
+import Select from '../../../components/FormElements/Select';
+import PrimaryButton from '../../../components/Buttons/PrimaryButton';
+import DeleteButton from '../../../components/Buttons/DeleteButton';
+import Loading from '../../../components/Loading';
+import { useDeleteUser } from '../hooks/useDeleteUser';
+import { useUpdateUser } from '../hooks/useUpdateUser';
+import { useCreateUser } from '../hooks/useCreateUser';
+import { useGetUser } from '../hooks/useGetUser';
 
 export default function UserForm({ type = 'create' }) {
   const { username } = useParams();
@@ -24,9 +24,7 @@ export default function UserForm({ type = 'create' }) {
   const { deleteUser, isDeleting } = useDeleteUser(username);
   const { updateUser, isUpdating } = useUpdateUser();
   const { createUser, isCreating } = useCreateUser();
-  const { user, isLoading } = useGetUser(
-    type === 'create' ? undefined : username
-  );
+  const { user, isLoading } = useGetUser(type === 'create' ? undefined : username);
 
   const jwtData = useJwtData();
   const navigate = useNavigate();
@@ -72,9 +70,8 @@ export default function UserForm({ type = 'create' }) {
   }, [jwtData, navigate]);
 
   const submitLabel = useMemo(
-    () =>
-      isCreating || isUpdating || isSubmitting ? 'Submitting...' : 'Submit',
-    [isCreating, isUpdating, isSubmitting]
+    () => (isCreating || isUpdating || isSubmitting ? 'Submitting...' : 'Submit'),
+    [isCreating, isUpdating, isSubmitting],
   );
 
   function onSubmit(form) {
@@ -109,19 +106,11 @@ export default function UserForm({ type = 'create' }) {
       />
       <PageHeading>{isUpdate ? 'Update User' : 'Create User'}</PageHeading>
 
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="bg-white rounded-lg shadow-md px-10 py-6"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-lg shadow-md px-10 py-6">
         <FormRow>
           <Label>Name</Label>
-          <Input
-            type="text"
-            {...register('name', { required: 'Name is required' })}
-          />
-          {errors?.name?.message && (
-            <p className="text-red-500 text-sm">{errors.name.message}</p>
-          )}
+          <Input type="text" {...register('name', { required: 'Name is required' })} />
+          {errors?.name?.message && <p className="text-red-500 text-sm">{errors.name.message}</p>}
         </FormRow>
 
         <FormRow>
@@ -131,9 +120,7 @@ export default function UserForm({ type = 'create' }) {
             disabled={isUpdate} // optional: disallow changing username on update
             {...register('username', { required: 'Username is required' })}
           />
-          {errors?.username?.message && (
-            <p className="text-red-500 text-sm">{errors.username.message}</p>
-          )}
+          {errors?.username?.message && <p className="text-red-500 text-sm">{errors.username.message}</p>}
         </FormRow>
 
         <FormRow>
@@ -148,9 +135,7 @@ export default function UserForm({ type = 'create' }) {
               },
             })}
           />
-          {errors?.email?.message && (
-            <p className="text-red-500 text-sm">{errors.email.message}</p>
-          )}
+          {errors?.email?.message && <p className="text-red-500 text-sm">{errors.email.message}</p>}
         </FormRow>
 
         <FormRow>
@@ -165,9 +150,7 @@ export default function UserForm({ type = 'create' }) {
               </option>
             ))}
           </Select>
-          {errors?.role?.message && (
-            <p className="text-red-500 text-sm">{errors.role.message}</p>
-          )}
+          {errors?.role?.message && <p className="text-red-500 text-sm">{errors.role.message}</p>}
         </FormRow>
 
         <FormRow>
@@ -179,9 +162,7 @@ export default function UserForm({ type = 'create' }) {
               </option>
             ))}
           </Select>
-          {errors?.status?.message && (
-            <p className="text-red-500 text-sm">{errors.status.message}</p>
-          )}
+          {errors?.status?.message && <p className="text-red-500 text-sm">{errors.status.message}</p>}
         </FormRow>
 
         <FormRow>
@@ -199,9 +180,7 @@ export default function UserForm({ type = 'create' }) {
                 : undefined,
             })}
           />
-          {errors?.password?.message && (
-            <p className="text-red-500 text-sm">{errors.password.message}</p>
-          )}
+          {errors?.password?.message && <p className="text-red-500 text-sm">{errors.password.message}</p>}
         </FormRow>
 
         <FormRow>
@@ -210,26 +189,15 @@ export default function UserForm({ type = 'create' }) {
             type="password"
             autoComplete="new-password"
             {...register('passwordConfirm', {
-              required:
-                type === 'create' ? 'Confirm Password is required' : false,
-              validate: (val) =>
-                passwordValue && val !== passwordValue
-                  ? 'Passwords do not match'
-                  : true,
+              required: type === 'create' ? 'Confirm Password is required' : false,
+              validate: (val) => (passwordValue && val !== passwordValue ? 'Passwords do not match' : true),
             })}
           />
-          {errors?.passwordConfirm?.message && (
-            <p className="text-red-500 text-sm">
-              {errors.passwordConfirm.message}
-            </p>
-          )}
+          {errors?.passwordConfirm?.message && <p className="text-red-500 text-sm">{errors.passwordConfirm.message}</p>}
         </FormRow>
 
         <div className="flex items-center gap-2.5 mt-5">
-          <PrimaryButton
-            type="submit"
-            disabled={isCreating || isUpdating || isSubmitting}
-          >
+          <PrimaryButton type="submit" disabled={isCreating || isUpdating || isSubmitting}>
             {submitLabel}
           </PrimaryButton>
 

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getUser } from '../../services/apiUsers';
+import { getUser } from '../services/apiUsers';
 import toast from 'react-hot-toast';
 
 export function useGetUser(username) {

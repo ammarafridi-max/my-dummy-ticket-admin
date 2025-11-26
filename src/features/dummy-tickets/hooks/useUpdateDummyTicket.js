@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { updateDummyTicketApi } from '../../services/apiDummyTickets';
+import { updateDummyTicketApi } from '../services/apiDummyTickets';
 import toast from 'react-hot-toast';
 
 export function useUpdateDummyTicket() {
