@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { sendEmailApi } from '../../../services/apiEmail';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useUpdateDummyTicket } from './useUpdateDummyTicket';
+import { sendEmailApi } from '../services/apiEmail';
 import toast from 'react-hot-toast';
 
 export function useSendEmail() {

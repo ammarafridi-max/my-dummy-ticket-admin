@@ -1,5 +1,4 @@
 import { apiFetch } from '../../../utils/apiClient';
-import { BACKEND } from '../../../config';
 
 const baseUrl = `/api/blogs`;
 

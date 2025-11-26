@@ -1,11 +1,8 @@
 import { BACKEND } from '../../../config';
-import { jwtCookie, jwtData } from '../../../services/jwt';
 
 export async function getDummyTicketsApi(params = {}) {
   const queryString = new URLSearchParams(params).toString();
-  const res = await fetch(`${BACKEND}/api/ticket?${queryString}`, {
-    headers: { Authorization: `Bearer ${jwtCookie}` },
-  });
+  const res = await fetch(`${BACKEND}/api/ticket?${queryString}`);
 
   if (!res.ok) {
     const error = await res.json();
@@ -18,9 +15,7 @@ export async function getDummyTicketsApi(params = {}) {
 }
 
 export async function getDummyTicketApi(sessionId) {
-  const res = await fetch(`${BACKEND}/api/ticket/${sessionId}`, {
-    headers: { Authorization: `Bearer ${jwtCookie}` },
-  });
+  const res = await fetch(`${BACKEND}/api/ticket/${sessionId}`);
 
   if (!res.ok) {
     const error = await res.json();
@@ -33,18 +28,13 @@ export async function getDummyTicketApi(sessionId) {
 }
 
 export async function updateDummyTicketApi({ sessionId, orderStatus }) {
-  const userId = jwtData?.id;
-  const res = await fetch(
-    `${BACKEND}/api/ticket/${sessionId}/updateOrderStatus`,
-    {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${jwtCookie}`,
-      },
-      body: JSON.stringify({ userId, orderStatus }),
-    }
-  );
+  const res = await fetch(`${BACKEND}/api/ticket/${sessionId}/updateOrderStatus`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ userId, orderStatus }),
+  });
 
   const data = await res.json();
 }
@@ -52,9 +42,6 @@ export async function updateDummyTicketApi({ sessionId, orderStatus }) {
 export async function deleteDummyTicketApi(sessionId) {
   const res = await fetch(`${BACKEND}/api/ticket/${sessionId}`, {
     method: 'DELETE',
-    headers: {
-      Authorization: `Bearer ${jwtCookie}`,
-    },
   });
 
   const data = await res.json();

@@ -3,7 +3,6 @@ import { useGetDummyTicket } from '../hooks/useGetDummyTicket';
 import { useDeleteDummyTicket } from '../hooks/useDeleteDummyTicket';
 import { convertToDubaiTime } from '../../../utils/timeFunctions';
 import { convertToDubaiDate } from '../../../utils/dateFunctions';
-import { useJwtData } from '../../../services/jwt';
 import { format } from 'date-fns';
 import Breadcrumb from '../../../components/Breadcrumb';
 import PageHeading from '../../../components/PageHeading';
@@ -46,7 +45,6 @@ export default function DummyTicketDetail({}) {
 }
 
 function BasicInfo({ dummyTicket }) {
-  const jwtData = useJwtData();
   return (
     <div className="bg-white px-10 py-6 rounded-lg shadow-md grid grid-cols-2 gap-x-10 gap-y-4 mt-10">
       <FormRow>
@@ -79,7 +77,7 @@ function BasicInfo({ dummyTicket }) {
         <Label>Payment Status</Label>
         <Input value={dummyTicket?.paymentStatus === 'PAID' ? 'Paid' : 'Unpaid'} disabled={true} />
       </FormRow>
-      {dummyTicket?.paymentStatus === 'PAID' && jwtData?.role?.toLowerCase() === 'admin' ? (
+      {dummyTicket?.paymentStatus === 'PAID' ? (
         <FormRow>
           <Label>Amount Paid</Label>
           <Input value={`${dummyTicket?.amountPaid?.currency} ${dummyTicket?.amountPaid?.amount}`} disabled={true} />
@@ -185,7 +183,6 @@ function Actions({ dummyTicket }) {
   const navigate = useNavigate();
   const { deleteDummyTicket, isDeleting } = useDeleteDummyTicket();
   const [searchParams] = useSearchParams();
-  const jwtData = useJwtData();
 
   const handleSendReservation = () => {
     navigate(`/send-email?template=createReservation&sessionId=${dummyTicket?.sessionId}`);
@@ -205,8 +202,7 @@ function Actions({ dummyTicket }) {
         )}
         {/* {dummyTicket?.paymentStatus === 'PAID' &&
           (dummyTicket?.orderStatus === 'PENDING' ||
-            (dummyTicket?.orderStatus === 'PROGRESS' &&
-              jwtData?.id === dummyTicket?.handledBy?._id)) && (
+            (dummyTicket?.orderStatus === 'PROGRESS' && (
             <PrimaryButton
               onClick={() =>
                 navigate(
@@ -219,7 +215,7 @@ function Actions({ dummyTicket }) {
             </PrimaryButton>
           )} */}
 
-        {jwtData?.role.toLowerCase() === 'admin' && dummyTicket?.paymentStatus !== 'PAID' && (
+        {dummyTicket?.paymentStatus !== 'PAID' && (
           <DeleteButton onClick={() => deleteDummyTicket(dummyTicket?.sessionId)} disabled={isDeleting}>
             Delete Reservation
           </DeleteButton>

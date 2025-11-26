@@ -1,11 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { MdClose } from 'react-icons/md';
-import { useJwtData } from '../../../services/jwt';
 
 export default function Filter() {
   const [activeFilterBox, setActiveFilterBox] = useState('');
-  const jwtData = useJwtData();
 
   return (
     <div className="flex justify-between mb-5">
@@ -13,20 +11,16 @@ export default function Filter() {
         <FilterTemplate
           id="createdAt"
           title="Submission"
-          options={
-            jwtData?.role.toLowerCase() === 'admin'
-              ? [
-                  { label: 'Last 6 Hours', value: '6_hours' },
-                  { label: 'Last 12 Hours', value: '12_hours' },
-                  { label: 'Last 24 Hours', value: '24_hours' },
-                  { label: 'Last 7 Days', value: '7_days' },
-                  { label: 'Last 14 Days', value: '14_days' },
-                  { label: 'Last 30 Days', value: '30_days' },
-                  { label: 'Last 90 Days', value: '90_days' },
-                  { label: 'All Time', value: 'all_time' },
-                ]
-              : [{ label: 'Last 6 Hours', value: '6_hours' }]
-          }
+          options={[
+            { label: 'Last 6 Hours', value: '6_hours' },
+            { label: 'Last 12 Hours', value: '12_hours' },
+            { label: 'Last 24 Hours', value: '24_hours' },
+            { label: 'Last 7 Days', value: '7_days' },
+            { label: 'Last 14 Days', value: '14_days' },
+            { label: 'Last 30 Days', value: '30_days' },
+            { label: 'Last 90 Days', value: '90_days' },
+            { label: 'All Time', value: 'all_time' },
+          ]}
           searchParamsName="createdAt"
           activeFilterBox={activeFilterBox}
           setActiveFilterBox={setActiveFilterBox}
@@ -67,14 +61,7 @@ export default function Filter() {
   );
 }
 
-function FilterTemplate({
-  id,
-  title,
-  options,
-  searchParamsName,
-  activeFilterBox,
-  setActiveFilterBox,
-}) {
+function FilterTemplate({ id, title, options, searchParamsName, activeFilterBox, setActiveFilterBox }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [boxTitle, setBoxTitle] = useState(title);
   const isOpen = activeFilterBox === id;

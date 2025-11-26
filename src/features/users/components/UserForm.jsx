@@ -1,8 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useJwtData } from '../../../services/jwt';
-import toast from 'react-hot-toast';
 import Breadcrumb from '../../../components/Breadcrumb';
 import FormRow from '../../../components/FormElements/FormRow';
 import Input from '../../../components/FormElements/Input';
@@ -26,7 +24,6 @@ export default function UserForm({ type = 'create' }) {
   const { createUser, isCreating } = useCreateUser();
   const { user, isLoading } = useGetUser(type === 'create' ? undefined : username);
 
-  const jwtData = useJwtData();
   const navigate = useNavigate();
 
   const {
@@ -61,13 +58,6 @@ export default function UserForm({ type = 'create' }) {
       });
     }
   }, [isUpdate, user, reset]);
-
-  useEffect(() => {
-    if (jwtData?.role?.toLowerCase() !== 'admin') {
-      toast.error('You are not allowed to access this page');
-      navigate('/dummy-tickets');
-    }
-  }, [jwtData, navigate]);
 
   const submitLabel = useMemo(
     () => (isCreating || isUpdating || isSubmitting ? 'Submitting...' : 'Submit'),

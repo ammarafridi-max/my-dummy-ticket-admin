@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
-import { useJwtData } from '../../../services/jwt';
 import { useUsers } from '../hooks/useUsers';
 import { FaPlus } from 'react-icons/fa6';
 import toast from 'react-hot-toast';
@@ -15,14 +14,6 @@ import Loading from '../../../components/Loading';
 export default function Users() {
   const { users, isLoadingUsers } = useUsers();
   const navigate = useNavigate();
-  const jwtData = useJwtData();
-
-  useEffect(() => {
-    if (jwtData?.role?.toLowerCase() !== 'admin') {
-      toast.error('You are not allowed to access this page');
-      navigate('/dummy-tickets');
-    }
-  }, [navigate]);
 
   if (isLoadingUsers) return <Loading />;
 
@@ -47,7 +38,7 @@ export default function Users() {
           <Table.Heading>Status</Table.Heading>
         </Table.Head>
         {users?.map((user, i) => (
-          <Table.Row key={i} href={jwtData.id === user._id ? `account` : `/users/${user.username}`}>
+          <Table.Row key={i} href={`/users/${user.username}`}>
             <Table.Item textAlign="left">{user.name}</Table.Item>
             <Table.Item textAlign="left">{user.username}</Table.Item>
             <Table.Item textAlign="left">{user.email}</Table.Item>
