@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { updatePasswordApi } from '../../services/apiAccount';
+import { updatePasswordApi } from '../services/apiAccount';
 import { toast } from 'react-toastify';
 
 export function useUpdateMyPassword() {

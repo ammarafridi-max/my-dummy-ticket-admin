@@ -1,12 +1,12 @@
 import { useForm } from 'react-hook-form';
-import { useUpdateMyPassword } from './useUpdateMyPassword';
+import { useUpdateMyPassword } from '../hooks/useUpdateMyPassword';
 import styled from 'styled-components';
-import FormRow from '../../components/FormElements/FormRow';
-import Label from '../../components/FormElements/Label';
-import Input from '../../components/FormElements/Input';
-import SectionHeading from '../../components/SectionHeading';
-import PrimaryButton from '../../components/Buttons/PrimaryButton';
-import LinkButton from '../../components/Buttons/LinkButton';
+import FormRow from '../../../components/FormElements/FormRow';
+import Label from '../../../components/FormElements/Label';
+import Input from '../../../components/FormElements/Input';
+import SectionHeading from '../../../components/SectionHeading';
+import PrimaryButton from '../../../components/Buttons/PrimaryButton';
+import LinkButton from '../../../components/Buttons/LinkButton';
 
 const Container = styled.div`
   margin-top: 80px;
@@ -65,8 +65,7 @@ export default function PasswordForm() {
               type="password"
               {...register('passwordConfirm', {
                 required: 'Password confirm is required',
-                validate: (value) =>
-                  value === password || 'Passwords do not match',
+                validate: (value) => value === password || 'Passwords do not match',
               })}
             />
             <p>{errors?.passwordConfirm?.message}</p>

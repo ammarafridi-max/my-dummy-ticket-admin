@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { getAccount } from '../../services/apiAccount';
+import { getMyAccountApi } from '../services/apiAccount';
 
 export function useGetMyAccount() {
   const { data: account, isLoading } = useQuery({
     queryKey: ['account'],
-    queryFn: getAccount,
+    queryFn: getMyAccountApi,
   });
 
   return { account, isLoading };

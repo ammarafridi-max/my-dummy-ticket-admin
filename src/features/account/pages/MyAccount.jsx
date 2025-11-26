@@ -1,7 +1,6 @@
 import { Helmet } from 'react-helmet-async';
-import AccountForm from './AccountForm';
-import PasswordForm from './PasswordForm';
-import Breadcrumb from '../../components/Breadcrumb';
+import AccountForm from '../components/AccountForm';
+import Breadcrumb from '../../../components/Breadcrumb';
 
 export default function MyAccount() {
   return (
