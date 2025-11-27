@@ -7,7 +7,7 @@ import {
   HiOutlineRss,
 } from 'react-icons/hi2';
 import { NavLink, useLocation } from 'react-router-dom';
-import { PiAirplane } from 'react-icons/pi';
+import { useAuth } from '../context/AuthContext';
 import { useLogout } from '../features/auth/hooks/useLogout';
 
 const links = [
@@ -15,7 +15,7 @@ const links = [
     name: 'Dashboard',
     href: '/dashboard',
     icon: HiOutlineHome,
-    accessTo: ['admin', 'agent'],
+    accessTo: ['admin', 'agent', 'blog-manager'],
   },
   {
     name: 'Orders',
@@ -27,30 +27,25 @@ const links = [
     name: 'Blogs',
     href: '/blogs',
     icon: HiOutlineRss,
-    accessTo: ['admin', 'agent'],
+    accessTo: ['admin', 'blog-manager'],
   },
-  { name: 'Users', href: '/users', icon: HiOutlineUsers, accessTo: ['admin'] },
-  // {
-  //   name: 'Airlines',
-  //   href: '/airlines',
-  //   icon: PiAirplane,
-  //   accessTo: ['admin'],
-  // },
+  { name: 'Users', href: '/users', icon: HiOutlineUsers, accessTo: ['admin', 'userManager'] },
   {
     name: 'My Account',
     href: '/account',
     icon: HiOutlineUser,
-    accessTo: ['admin', 'agent'],
+    accessTo: ['admin', 'agent', 'blog-manager'],
   },
   {
     name: 'Log Out',
     icon: HiArrowRightOnRectangle,
-    accessTo: ['admin', 'agent'],
-    action: 'logout', // 👈 new flag
+    accessTo: ['admin', 'agent', 'blog-manager'],
+    action: 'logout',
   },
 ];
 
 function SidebarLink({ name, href, Icon, accessTo, action }) {
+  const { user } = useAuth();
   const { pathname } = useLocation();
   const isActive = href && pathname.startsWith(href);
   const { logout } = useLogout();
@@ -67,12 +62,13 @@ function SidebarLink({ name, href, Icon, accessTo, action }) {
     );
   }
 
+  if (!accessTo?.includes(user?.role)) return null;
+
   return (
     <NavLink
       to={href}
-      className={`flex items-center gap-2.5 font-light text-xl p-2.5 mb-1.25 rounded-sm duration-150 hover:bg-gray-100 hover:text-black ${
-        isActive ? 'bg-gray-100 text-black' : 'bg-transparent text-white'
-      }`}
+      className={`flex items-center gap-2.5 font-light text-xl p-2.5 mb-1.25 rounded-sm duration-150 hover:bg-gray-100 hover:text-black
+        ${isActive ? 'bg-gray-100 text-black' : 'bg-transparent text-white'}`}
     >
       <Icon className="w-5 h-5" />
       <span className="text-[15px]">{name}</span>

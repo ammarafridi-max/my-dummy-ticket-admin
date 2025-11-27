@@ -6,9 +6,7 @@ const TableContext = createContext();
 function Table({ children, columnTemplate }) {
   return (
     <div className="bg-white rounded-lg overflow-hidden shadow-lg">
-      <TableContext.Provider value={{ columnTemplate }}>
-        {children}
-      </TableContext.Provider>
+      <TableContext.Provider value={{ columnTemplate }}>{children}</TableContext.Provider>
     </div>
   );
 }
@@ -25,10 +23,8 @@ function Head({ children }) {
   );
 }
 
-function Heading({ children, textAlign = 'center' }) {
-  return (
-    <p className={`font-semibold text-[14px] text-${textAlign}`}>{children}</p>
-  );
+function Heading({ children, textAlign = 'left' }) {
+  return <p className={`font-semibold text-[14px] text-${textAlign}`}>{children}</p>;
 }
 
 function Row({ children, onClick, href }) {
@@ -46,22 +42,12 @@ function Row({ children, onClick, href }) {
   );
 }
 
-function Item({ children, textAlign = 'center', textTransform = 'none' }) {
-  return (
-    <p
-      className={`text-[14px] text-${textAlign} ${textTransform} flex flex-col`}
-    >
-      {children}
-    </p>
-  );
+function Item({ children, textAlign = 'left', textTransform = 'none' }) {
+  return <p className={`text-[14px] text-${textAlign} ${textTransform} flex flex-col`}>{children}</p>;
 }
 
 function Footer({ children }) {
-  return (
-    <div className="bg-gray-800 text-white text-[14px] py-2.5 px-5">
-      {children}
-    </div>
-  );
+  return <div className="bg-gray-800 text-white text-[14px] py-2.5 px-5">{children}</div>;
 }
 
 Table = Table;
