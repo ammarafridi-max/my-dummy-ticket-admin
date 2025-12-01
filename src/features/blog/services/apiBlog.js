@@ -1,3 +1,4 @@
+import { BACKEND } from '../../../config';
 import { apiFetch } from '../../../utils/apiClient';
 
 const baseUrl = `/api/blogs`;
@@ -19,14 +20,28 @@ export function getBlogByIdApi(id) {
   return apiFetch(`${baseUrl}/${id}`);
 }
 
-export function createBlogApi(formData) {
-  return apiFetch(`${baseUrl}`, {
+// ✅ USE RAW FETCH FOR FILE UPLOAD
+export async function createBlogApi(formData) {
+  const res = await fetch(`${BACKEND}${baseUrl}`, {
     method: 'POST',
     body: formData,
-    // headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
   });
+
+  if (!res.ok) {
+    let message = 'Failed to create blog';
+    try {
+      const err = await res.json();
+      message = err.message || message;
+    } catch (_) {}
+    throw new Error(message);
+  }
+
+  const data = await res.json();
+  return data?.data ?? null;
 }
 
+// Update without file (JSON)
 export function updateBlogApi({ id, blogData }) {
   return apiFetch(`${baseUrl}/${id}`, {
     method: 'PATCH',

@@ -10,8 +10,8 @@ import Label from '../../../components/FormElements/Label';
 import Input from '../../../components/FormElements/Input';
 import SectionHeading from '../../../components/SectionHeading';
 import Loading from '../../../components/Loading';
-import PrimaryButton from '../../../components/Buttons/PrimaryButton';
-import DeleteButton from '../../../components/Buttons/DeleteButton';
+import PrimaryButton from '../../../components/PrimaryButton';
+import DeleteButton from '../../../components/DeleteButton';
 
 function FormRow({ children }) {
   return <div className="grid grid-cols-[4fr_8fr] items-center">{children}</div>;

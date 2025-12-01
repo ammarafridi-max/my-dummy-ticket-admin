@@ -1,31 +1,30 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useGetMe } from '../features/auth/hooks/useGetMe';
-import { useLogout } from '../features/auth/hooks/useLogout';
+import { getMeApi } from '../features/auth/services/apiAuth';
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const { myAccount, isLoadingMyAccount } = useGetMe();
-  const { logout } = useLogout();
+  const [user, setUser] = useState(undefined);
 
-  const [user, setUser] = useState(null);
+  async function fetchUser() {
+    const me = await getMeApi();
+    setUser(me || null);
+  }
 
-  // Sync global user state whenever useGetMe() returns
   useEffect(() => {
-    if (!isLoadingMyAccount) setUser(myAccount || null);
-  }, [myAccount, isLoadingMyAccount]);
+    fetchUser();
+  }, []);
 
-  // Automatically logout on 401 (backend rejects cookie)
-  useEffect(() => {
-    if (!isLoadingMyAccount && myAccount === null) {
-      // user is not logged in
-      // auto logout is optional — uncomment if desired:
-      // logout();
-    }
-  }, [myAccount, isLoadingMyAccount]);
-
-  const isAuthenticated = !!user;
+  const isAuthenticated = user !== null && user !== undefined;
   const isAdmin = user?.role === 'admin';
+
+  async function logout() {
+    await fetch(`${import.meta.env.VITE_BACKEND}/api/auth/logout`, {
+      credentials: 'include',
+    });
+    setUser(null);
+    window.location.href = '/login';
+  }
 
   return (
     <AuthContext.Provider
@@ -35,14 +34,15 @@ export function AuthProvider({ children }) {
         isAuthenticated,
         isAdmin,
         logout,
+        refreshUser: fetchUser,
       }}
     >
-      {!isLoadingMyAccount ? (
-        children
-      ) : (
+      {user === undefined ? (
         <div className="flex items-center justify-center h-screen text-white">
-          <div className="animate-pulse text-lg">Loading...</div>
+          <div className="animate-pulse text-lg">Loading session...</div>
         </div>
+      ) : (
+        children
       )}
     </AuthContext.Provider>
   );

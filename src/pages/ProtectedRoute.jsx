@@ -1,20 +1,12 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import { useGetMe } from '../features/auth/hooks/useGetMe';
+import { useAuth } from '../context/AuthContext';
 
 export default function ProtectedRoute() {
-  const { myAccount, isLoadingMyAccount } = useGetMe();
+  const { isAuthenticated, user } = useAuth();
 
-  if (isLoadingMyAccount) {
-    return (
-      <div className="flex items-center justify-center h-screen text-white">
-        <div className="animate-pulse text-lg">Checking authentication...</div>
-      </div>
-    );
-  }
+  if (user === undefined) return null;
 
-  if (!myAccount) {
-    return <Navigate to="/login" replace />;
-  }
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
 
   return <Outlet />;
 }

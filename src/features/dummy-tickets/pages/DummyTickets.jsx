@@ -13,8 +13,10 @@ import WarningPill from '../../../components/WarningPill';
 import Filter from './../components/Filter';
 import Breadcrumb from '../../../components/Breadcrumb';
 import Loading from '../../../components/Loading';
+import { useAuth } from '../../../context/AuthContext';
 
 export default function DummyTickets() {
+  const { role } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const { dummyTickets, pagination, isLoadingDummyTickets, isErrorDummyTickets } = useDummyTickets();
 
@@ -70,9 +72,7 @@ export default function DummyTickets() {
                 </Table.Item>
                 <Table.Item>{item?.type}</Table.Item>
                 <Table.Item>
-                  {item?.ticketDelivery?.immediate
-                    ? 'Immediate'
-                    : convertToDubaiDate(item?.ticketDelivery?.deliveryDate)}
+                  {item?.ticketDelivery?.immediate ? 'Immediate' : convertToDubaiDate(item?.ticketDelivery?.deliveryDate)}
                 </Table.Item>
 
                 <Table.Item>{item?.handledBy?.name.split(' ')[0]}</Table.Item>
@@ -107,8 +107,7 @@ export default function DummyTickets() {
                 {pagination ? (
                   <p>
                     Showing {pagination.total > 0 ? (currentPage - 1) * limit + 1 : 0} -{' '}
-                    {pagination.total > 0 ? Math.min(currentPage * limit, pagination.total) : 0} of {pagination.total}{' '}
-                    results
+                    {pagination.total > 0 ? Math.min(currentPage * limit, pagination.total) : 0} of {pagination.total} results
                   </p>
                 ) : (
                   <p>Loading...</p>
@@ -136,11 +135,7 @@ export default function DummyTickets() {
 
 function PageButton({ children, onClick, disabled }) {
   return (
-    <button
-      className="bg-transparent border-0 cursor-pointer disabled:opacity-50"
-      onClick={onClick}
-      disabled={disabled}
-    >
+    <button className="bg-transparent border-0 cursor-pointer disabled:opacity-50" onClick={onClick} disabled={disabled}>
       {children}
     </button>
   );

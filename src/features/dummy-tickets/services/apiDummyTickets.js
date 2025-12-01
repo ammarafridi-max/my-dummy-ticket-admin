@@ -1,8 +1,12 @@
 import { BACKEND } from '../../../config';
+import { apiFetch } from '../../../utils/apiClient';
 
 export async function getDummyTicketsApi(params = {}) {
   const queryString = new URLSearchParams(params).toString();
-  const res = await fetch(`${BACKEND}/api/ticket?${queryString}`);
+  console.log(new URLSearchParams(params).toString());
+  const res = await fetch(`${BACKEND}/api/ticket?${queryString}`, {
+    credentials: 'include',
+  });
 
   if (!res.ok) {
     const error = await res.json();
@@ -15,7 +19,9 @@ export async function getDummyTicketsApi(params = {}) {
 }
 
 export async function getDummyTicketApi(sessionId) {
-  const res = await fetch(`${BACKEND}/api/ticket/${sessionId}`);
+  const res = await fetch(`${BACKEND}/api/ticket/${sessionId}`, {
+    credentials: 'include',
+  });
 
   if (!res.ok) {
     const error = await res.json();
@@ -34,6 +40,7 @@ export async function updateDummyTicketApi({ sessionId, orderStatus }) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ userId, orderStatus }),
+    credentials: 'include',
   });
 
   const data = await res.json();
@@ -42,6 +49,7 @@ export async function updateDummyTicketApi({ sessionId, orderStatus }) {
 export async function deleteDummyTicketApi(sessionId) {
   const res = await fetch(`${BACKEND}/api/ticket/${sessionId}`, {
     method: 'DELETE',
+    credentials: 'include',
   });
 
   const data = await res.json();

@@ -5,7 +5,7 @@ import { useUpdateMyAccount } from '../hooks/useUpdateMyAccount';
 import FormRow from '../../../components/FormElements/FormRow';
 import Input from '../../../components/FormElements/Input';
 import Label from '../../../components/FormElements/Label';
-import PrimaryButton from '../../../components/Buttons/PrimaryButton';
+import PrimaryButton from '../../../components/PrimaryButton';
 import PageHeading from '../../../components/PageHeading';
 
 export default function AccountForm() {

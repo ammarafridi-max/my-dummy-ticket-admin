@@ -9,7 +9,7 @@ export function useUpdateBlog() {
     mutationFn: ({ id, blogData }) => updateBlogApi({ id, blogData }),
     onSuccess: () => {
       toast.success('Blog updated successfully');
-      navigate('/blogs');
+      // navigate('/blogs');
     },
     onError: (err) => {
       toast.error(`Blog could not be updated: ${err.message}`);

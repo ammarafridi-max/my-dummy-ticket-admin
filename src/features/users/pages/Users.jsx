@@ -3,13 +3,13 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { useUsers } from '../hooks/useUsers';
 import { FaPlus } from 'react-icons/fa6';
-import toast from 'react-hot-toast';
 import DangerPill from '../../../components/DangerPill';
 import SuccessPill from '../../../components/SuccessPill';
 import Table from '../../../components/Table';
 import PageHeading from '../../../components/PageHeading';
 import Breadcrumb from '../../../components/Breadcrumb';
 import Loading from '../../../components/Loading';
+import { capitalCase } from 'change-case';
 
 export default function Users() {
   const { users, isLoadingUsers } = useUsers();
@@ -42,7 +42,7 @@ export default function Users() {
             <Table.Item textAlign="left">{user.name}</Table.Item>
             <Table.Item textAlign="left">{user.username}</Table.Item>
             <Table.Item textAlign="left">{user.email}</Table.Item>
-            <Table.Item textTransform="capitalize">{user.role}</Table.Item>
+            <Table.Item textTransform="capitalize">{capitalCase(user.role)}</Table.Item>
             <Table.Item textAlign="center">
               {user.status === 'ACTIVE' ? <SuccessPill>{user.status}</SuccessPill> : <DangerPill>{user.status}</DangerPill>}
             </Table.Item>

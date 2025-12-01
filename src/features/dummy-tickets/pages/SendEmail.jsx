@@ -10,7 +10,7 @@ import Label from '../../../components/FormElements/Label';
 import Breadcrumb from '../../../components/Breadcrumb';
 import PageHeading from '../../../components/PageHeading';
 import Textarea from '../../../components/FormElements/Textarea';
-import PrimaryButton from '../../../components/Buttons/PrimaryButton';
+import PrimaryButton from '../../../components/PrimaryButton';
 import Loading from '../../../components/Loading';
 
 const templates = [

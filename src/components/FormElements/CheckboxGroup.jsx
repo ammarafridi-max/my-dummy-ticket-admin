@@ -41,7 +41,7 @@ const CheckboxGroup = ({
                   disabled={disabled}
                   onChange={() => handleToggle(opt.value)}
                 />
-                <span className="text-[14px]">{opt.label}</span>
+                <span className="text-[14px] font-light">{opt.label}</span>
               </label>
             ))}
           </div>

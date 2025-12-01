@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { MdClose } from 'react-icons/md';
+import { useAuth } from '../../../context/AuthContext';
 
 export default function Filter() {
+  const { user } = useAuth();
   const [activeFilterBox, setActiveFilterBox] = useState('');
 
   return (
@@ -11,16 +13,20 @@ export default function Filter() {
         <FilterTemplate
           id="createdAt"
           title="Submission"
-          options={[
-            { label: 'Last 6 Hours', value: '6_hours' },
-            { label: 'Last 12 Hours', value: '12_hours' },
-            { label: 'Last 24 Hours', value: '24_hours' },
-            { label: 'Last 7 Days', value: '7_days' },
-            { label: 'Last 14 Days', value: '14_days' },
-            { label: 'Last 30 Days', value: '30_days' },
-            { label: 'Last 90 Days', value: '90_days' },
-            { label: 'All Time', value: 'all_time' },
-          ]}
+          options={
+            user?.role === 'admin'
+              ? [
+                  { label: 'Last 6 Hours', value: '6_hours' },
+                  { label: 'Last 12 Hours', value: '12_hours' },
+                  { label: 'Last 24 Hours', value: '24_hours' },
+                  { label: 'Last 7 Days', value: '7_days' },
+                  { label: 'Last 14 Days', value: '14_days' },
+                  { label: 'Last 30 Days', value: '30_days' },
+                  { label: 'Last 90 Days', value: '90_days' },
+                  { label: 'All Time', value: 'all_time' },
+                ]
+              : [{ label: 'Last 6 Hours', value: '6_hours' }]
+          }
           searchParamsName="createdAt"
           activeFilterBox={activeFilterBox}
           setActiveFilterBox={setActiveFilterBox}

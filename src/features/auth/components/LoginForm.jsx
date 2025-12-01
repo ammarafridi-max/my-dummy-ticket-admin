@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLogin } from '../hooks/useLogin';
-import PrimaryButton from '../../../components/Buttons/PrimaryButton';
+import PrimaryButton from '../../../components/PrimaryButton';
 import Input from '../../../components/FormElements/Input';
 import Label from '../../../components/FormElements/Label';
 

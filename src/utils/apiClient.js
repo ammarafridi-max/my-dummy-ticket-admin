@@ -13,6 +13,9 @@ async function checkError(res) {
 
 async function returnData(res) {
   if (res.status === 204) return null;
+  if (res.status === 401) {
+    window.location.href = '/login';
+  }
   try {
     const json = await res.json();
     return json?.data ?? null;
