@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { getMeApi } from '../features/auth/services/apiAuth';
+import Loading from '../components/Loading';
 
 const AuthContext = createContext();
 
@@ -45,13 +46,7 @@ export function AuthProvider({ children }) {
         refreshUser: fetchUser,
       }}
     >
-      {loading ? (
-        <div className="flex items-center justify-center h-screen text-white">
-          <div className="animate-pulse text-lg">Loading session...</div>
-        </div>
-      ) : (
-        children
-      )}
+      {loading ? <Loading /> : children}
     </AuthContext.Provider>
   );
 }
