@@ -3,7 +3,6 @@ import { apiFetch } from '../../../utils/apiClient';
 
 export async function getDummyTicketsApi(params = {}) {
   const queryString = new URLSearchParams(params).toString();
-  console.log(new URLSearchParams(params).toString());
   const res = await fetch(`${BACKEND}/api/ticket?${queryString}`, {
     credentials: 'include',
   });

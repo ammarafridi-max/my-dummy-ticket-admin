@@ -2,32 +2,28 @@ import { BACKEND } from '../config';
 
 async function checkError(res) {
   if (!res.ok) {
-    let errorMsg = 'Something went wrong';
+    let message = 'Something went wrong';
     try {
-      const error = await res.json();
-      errorMsg = error.message || error.error || errorMsg;
+      const json = await res.json();
+      message = json.message || json.error || message;
     } catch (_) {}
-    throw new Error(errorMsg);
+    throw new Error(message);
   }
 }
 
 async function returnData(res) {
-  if (res.status === 204) return null;
-  if (res.status === 401) {
-    window.location.href = '/login';
-  }
-  try {
-    const json = await res.json();
-    return json?.data ?? null;
-  } catch {
-    return null;
-  }
+  const json = await res.json();
+  return json.data || null;
 }
 
 export async function apiFetch(path, options = {}) {
   const res = await fetch(`${BACKEND}${path}`, {
     ...options,
-    credentials: 'include', // 🔥 MUST HAVE FOR COOKIE AUTH
+    headers: {
+      'Content-Type': 'application/json',
+      ...(options.headers || {}),
+    },
+    credentials: 'include',
   });
 
   await checkError(res);

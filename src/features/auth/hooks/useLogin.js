@@ -6,17 +6,21 @@ import toast from 'react-hot-toast';
 
 export function useLogin() {
   const navigate = useNavigate();
-  const { refreshUser } = useAuth();
+  const { setUser, refreshUser } = useAuth();
 
   const { mutate: login, isPending: isLoggingIn } = useMutation({
     mutationFn: loginApi,
-    onSuccess: async () => {
+    onSuccess: async (user) => {
       toast.success('Welcome back!');
-      await refreshUser();
+
+      setUser(user);
+
+      refreshUser();
+
       navigate('/');
     },
-    onError: () => {
-      toast.error('Invalid credentials');
+    onError: (err) => {
+      toast.error(err.message || 'Invalid credentials');
     },
   });
 

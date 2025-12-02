@@ -5,17 +5,24 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(undefined);
+  const [loading, setLoading] = useState(true);
 
   async function fetchUser() {
-    const me = await getMeApi();
-    setUser(me || null);
+    try {
+      const me = await getMeApi();
+      setUser(me || null);
+    } catch {
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
     fetchUser();
   }, []);
 
-  const isAuthenticated = user !== null && user !== undefined;
+  const isAuthenticated = !!user;
   const isAdmin = user?.role === 'admin';
 
   async function logout() {
@@ -33,11 +40,12 @@ export function AuthProvider({ children }) {
         setUser,
         isAuthenticated,
         isAdmin,
+        loading,
         logout,
         refreshUser: fetchUser,
       }}
     >
-      {user === undefined ? (
+      {loading ? (
         <div className="flex items-center justify-center h-screen text-white">
           <div className="animate-pulse text-lg">Loading session...</div>
         </div>

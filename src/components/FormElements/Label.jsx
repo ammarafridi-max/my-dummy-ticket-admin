@@ -1,9 +1,6 @@
-export default function Label({ children, className, htmlFor }) {
+export default function Label({ children, className, htmlFor, textColor = 'text-gray-900' }) {
   return (
-    <label
-      htmlFor={htmlFor}
-      className={`text-gray-900 uppercase font-medium text-[14px] ${className}`}
-    >
+    <label htmlFor={htmlFor} className={`${textColor} uppercase font-medium text-[14px] ${className}`}>
       {children}
     </label>
   );

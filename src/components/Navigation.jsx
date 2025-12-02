@@ -8,7 +8,6 @@ import {
 } from 'react-icons/hi2';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useLogout } from '../features/auth/hooks/useLogout';
 
 const links = [
   {
@@ -44,10 +43,9 @@ const links = [
 ];
 
 function SidebarLink({ name, href, Icon, accessTo, action }) {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { pathname } = useLocation();
   const isActive = href && pathname.startsWith(href);
-  const { logout } = useLogout();
 
   if (action === 'logout') {
     return (

@@ -3,6 +3,7 @@ import { useBlogs } from '../hooks/useBlogs';
 import { Helmet } from 'react-helmet-async';
 import { FaPlus } from 'react-icons/fa6';
 import { Link } from 'react-router-dom';
+import { format } from 'date-fns';
 import Breadcrumb from '../../../components/Breadcrumb';
 import PageHeading from '../../../components/PageHeading';
 import Table from '../../../components/Table';
@@ -39,7 +40,7 @@ export default function Blogs() {
           </Table.Head>
           {blogs?.map((blog) => (
             <Table.Row key={blog?._id} href={`/blogs/${blog?._id}`}>
-              <Table.Item>{blog?.createdAt}</Table.Item>
+              <Table.Item>{format(blog?.createdAt, 'dd MMM')}</Table.Item>
               <Table.Item>{blog?.title}</Table.Item>
               <Table.Item>{blog?.slug}</Table.Item>
               <Table.Item>{blog?.tags?.map((tag) => capitalCase(tag)).join(', ')}</Table.Item>
