@@ -1,11 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../context/AuthContext';
 import { useLogin } from '../hooks/useLogin';
 import PrimaryButton from '../../../components/PrimaryButton';
 import Input from '../../../components/FormElements/Input';
 import Label from '../../../components/FormElements/Label';
 
 export default function LoginForm() {
+  const navigate = useNavigate();
   const { login, isLoggingIn } = useLogin();
+  const { user } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -13,6 +17,12 @@ export default function LoginForm() {
     e.preventDefault();
     login({ email, password });
   }
+
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-100 to-gray-200">
