@@ -20,9 +20,7 @@ export default function CreateBlogPost() {
     formData.append('slug', data.slug || '');
     formData.append('excerpt', data.excerpt || '');
     formData.append('status', 'draft');
-    formData.append('author', 'Admin');
     formData.append('content', editorRef.current.getContent());
-    formData.append('status', data.status);
 
     if (data.tags && data.tags.length > 0) {
       data.tags.forEach((tag) => formData.append('tags', tag));
