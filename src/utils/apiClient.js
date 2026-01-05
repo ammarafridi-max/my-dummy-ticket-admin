@@ -20,7 +20,6 @@ export async function apiFetch(path, options = {}) {
   const res = await fetch(`${BACKEND}${path}`, {
     ...options,
     headers: {
-      'Content-Type': 'application/json',
       ...(options.headers || {}),
     },
     credentials: 'include',
@@ -33,7 +32,7 @@ export async function apiFetch(path, options = {}) {
 export async function apiUpload(path, formData, method = 'POST') {
   const res = await fetch(`${BACKEND}${path}`, {
     method,
-    credentials: 'include', // 🔥 MUST HAVE
+    credentials: 'include',
     body: formData,
   });
 
