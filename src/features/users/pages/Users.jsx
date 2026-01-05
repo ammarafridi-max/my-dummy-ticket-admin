@@ -29,7 +29,7 @@ export default function Users() {
         ]}
       />
       <PageHeading>Users</PageHeading>
-      <Table columnTemplate="1fr_1fr_1.5fr_1fr_0.5fr">
+      <Table $columntemplate="1fr 1fr 1.5fr 1fr 0.5fr">
         <Table.Head>
           <Table.Heading textAlign="left">Name</Table.Heading>
           <Table.Heading textAlign="left">Username</Table.Heading>

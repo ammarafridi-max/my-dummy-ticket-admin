@@ -29,7 +29,7 @@ export default function Blogs() {
       {isLoadingBlogs && <Loading />}
       {isErrorBlogs && <p>Error loading blogs</p>}
       {blogs && (
-        <Table columnTemplate="7fr 2fr 1fr">
+        <Table $columntemplate="7fr 2fr 1fr">
           <Table.Head>
             <Table.Heading>Title</Table.Heading>
             <Table.Heading>Tags</Table.Heading>

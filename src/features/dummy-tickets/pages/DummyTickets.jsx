@@ -46,7 +46,7 @@ export default function DummyTickets() {
       {isLoadingDummyTickets && <Loading />}
       {isErrorDummyTickets && <p>Error loading dummy tickets</p>}
       {dummyTickets && (
-        <Table columnTemplate="0.75fr_2fr_1fr_1fr_1fr_1fr_1.25fr_1fr">
+        <Table $columntemplate="0.75fr 2fr 1fr 1fr 1fr 1fr 1.25fr 1fr">
           <Table.Head>
             <Table.Heading>Date</Table.Heading>
             <Table.Heading textAlign="left">Name</Table.Heading>
