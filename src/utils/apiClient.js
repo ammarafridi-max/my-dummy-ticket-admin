@@ -12,6 +12,7 @@ async function checkError(res) {
 }
 
 async function returnData(res) {
+  if (res.status === 204) return null;
   const json = await res.json();
   return json.data || null;
 }
