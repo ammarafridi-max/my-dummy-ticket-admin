@@ -1,7 +1,7 @@
 import { BACKEND } from '../../../config';
 import { apiFetch } from '../../../utils/apiClient';
 
-const baseUrl = `/api/blogs`;
+const URL = `/api/blogs`;
 
 export function getAllBlogsApi({ page = 1, limit = 10, status, tag, search } = {}) {
   const params = new URLSearchParams({ page, limit });
@@ -9,20 +9,19 @@ export function getAllBlogsApi({ page = 1, limit = 10, status, tag, search } = {
   if (tag) params.append('tag', tag);
   if (search) params.append('search', search);
 
-  return apiFetch(`${baseUrl}?${params.toString()}`);
+  return apiFetch(`${URL}?${params.toString()}`);
 }
 
 export function getBlogBySlugApi(slug) {
-  return apiFetch(`${baseUrl}/slug/${encodeURIComponent(slug)}`);
+  return apiFetch(`${URL}/slug/${encodeURIComponent(slug)}`);
 }
 
 export function getBlogByIdApi(id) {
-  return apiFetch(`${baseUrl}/${id}`);
+  return apiFetch(`${URL}/${id}`);
 }
 
-// ✅ USE RAW FETCH FOR FILE UPLOAD
 export async function createBlogApi(formData) {
-  const res = await fetch(`${BACKEND}${baseUrl}`, {
+  const res = await fetch(`${BACKEND}${URL}`, {
     method: 'POST',
     body: formData,
     credentials: 'include',
@@ -41,17 +40,29 @@ export async function createBlogApi(formData) {
   return data?.data ?? null;
 }
 
-// Update without file (JSON)
 export function updateBlogApi({ id, blogData }) {
-  return apiFetch(`${baseUrl}/${id}`, {
+  return apiFetch(`${URL}/${id}`, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(blogData),
+    body: blogData,
   });
 }
 
 export function deleteBlogApi(id) {
-  return apiFetch(`${baseUrl}/${id}`, {
+  return apiFetch(`${URL}/${id}`, {
     method: 'DELETE',
+  });
+}
+
+export function publishBlogApi(id) {
+  return apiFetch(`${URL}/${id}/publish`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+  });
+}
+
+export function duplicateBlogApi(id) {
+  return apiFetch(`${URL}/${id}/duplicate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
   });
 }
