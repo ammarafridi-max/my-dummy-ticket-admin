@@ -1,10 +1,20 @@
 import { forwardRef } from 'react';
 
-const Input = forwardRef(function Input({ className = '', ...props }, ref) {
+const Input = forwardRef(function Input({ className = '', error = false, readOnly, ...props }, ref) {
   return (
     <input
-      ref={ref} // 👈 forward the ref so RHF can control it
-      className={`font-light bg-white rounded-sm w-full py-2 px-3 text-[14px] border border-gray-300 outline-0 disabled:bg-gray-50 ${className}`}
+      ref={ref}
+      readOnly={readOnly} // make sure readOnly works properly
+      aria-invalid={error ? 'true' : 'false'}
+      className={`
+        bg-white w-full rounded-md text-[14px] font-light
+        py-2.5 px-3 border outline-none transition-all duration-150
+        ${error ? 'border-red-500 focus:border-red-500' : 'border-gray-300'}
+        ${readOnly ? 'bg-gray-50 cursor-not-allowed' : ''}
+        ${props.disabled ? 'bg-gray-100 cursor-not-allowed' : ''}
+        focus:ring-2 focus:ring-blue-200 focus:border-blue-500
+        ${className}
+      `}
       {...props}
     />
   );

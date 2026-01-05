@@ -1,25 +1,31 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import { TINYMCE_API_KEY } from '../config';
 
-export default function TinyEditor({ value, disabled = false, editorRef }) {
-  useEffect(() => {
-    if (editorRef.current && value) {
-      editorRef.current.setContent(value);
-    }
-  }, [value, editorRef]);
-
+export default function TinyEditor({ initialValue, disabled = false, editorRef }) {
   return (
     <Editor
       apiKey={TINYMCE_API_KEY}
-      onInit={(_evt, editor) => (editorRef.current = editor)}
-      initialValue={value} // Add this for initial content
+      onInit={(_evt, editor) => {
+        editorRef.current = editor;
+        if (initialValue) {
+          editor.setContent(initialValue);
+        }
+      }}
+      initialValue={initialValue || ''}
       init={{
         height: 500,
         menubar: false,
         plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
         toolbar:
           'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+        content_style:
+          'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif; font-size: 14px; }',
+        paste_as_text: false,
+        valid_elements: '*[*]',
+        extended_valid_elements: '*[*]',
+        convert_newlines_to_brs: false,
+        remove_trailing_brs: false,
       }}
       disabled={disabled}
     />
