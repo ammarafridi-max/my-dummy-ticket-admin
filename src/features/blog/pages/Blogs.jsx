@@ -1,18 +1,20 @@
-import { capitalCase } from 'change-case';
-import { useBlogs } from '../hooks/useBlogs';
 import { Helmet } from 'react-helmet-async';
-import { FaPlus } from 'react-icons/fa6';
+import { FaCopy, FaPlus } from 'react-icons/fa6';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
-import Breadcrumb from '../../../components/Breadcrumb';
-import PageHeading from '../../../components/PageHeading';
-import Table from '../../../components/Table';
+import { capitalCase } from 'change-case';
+import { useBlogs } from '../hooks/useBlogs';
+import { useDuplicateBlog } from '../hooks/useDuplicateBlog';
 import Loading from '../../../components/Loading';
 import WarningPill from '../../../components/WarningPill';
 import SuccessPill from '../../../components/SuccessPill';
+import Breadcrumb from '../../../components/Breadcrumb';
+import PageHeading from '../../../components/PageHeading';
+import Table from '../../../components/Table';
 
 export default function Blogs() {
   const { blogs, isLoadingBlogs, isErrorBlogs } = useBlogs();
+  const { duplicateBlog, isDuplicatingBlog } = useDuplicateBlog();
 
   return (
     <>
@@ -29,8 +31,9 @@ export default function Blogs() {
       {isLoadingBlogs && <Loading />}
       {isErrorBlogs && <p>Error loading blogs</p>}
       {blogs && (
-        <Table $columntemplate="7fr 2fr 1fr">
+        <Table $columntemplate="0.5fr 8fr 2fr 1.5fr">
           <Table.Head>
+            <Table.Heading></Table.Heading>
             <Table.Heading>Title</Table.Heading>
             <Table.Heading>Tags</Table.Heading>
             <Table.Heading textAlign="center">Status</Table.Heading>
@@ -38,9 +41,17 @@ export default function Blogs() {
           {blogs?.map((blog) => (
             <Table.Row key={blog?._id} href={`/blogs/${blog?._id}`}>
               <Table.Item>
+                <img src={blog?.coverImageUrl} alt={blog?.title} className="w-full aspect-square object-cover rounded-lg" />
+              </Table.Item>
+              <Table.Item>
                 <span className="text-[17px] mb-1">{blog?.title}</span>
                 <span className="font-light text-gray-500">
                   Created at {format(blog.createdAt, 'dd MMM yyyy')} by {blog?.author?.name}
+                </span>
+                <span className="mt-2">
+                  <Table.DuplicateLink onClick={() => duplicateBlog(blog?._id)}>
+                    <FaCopy />
+                  </Table.DuplicateLink>
                 </span>
               </Table.Item>
               <Table.Item>{blog?.tags?.map((tag) => capitalCase(tag)).join(', ')}</Table.Item>
