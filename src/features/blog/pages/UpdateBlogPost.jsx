@@ -48,8 +48,6 @@ export default function UpdateBlogPost() {
       formData.append('newCoverImage', data.coverImage[0]);
     }
 
-    console.log(formData);
-
     if (blog?.status === 'draft' || blog?.status === 'archive') {
       publishBlog({ id });
     } else {
