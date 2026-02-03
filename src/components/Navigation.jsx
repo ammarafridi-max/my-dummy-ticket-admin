@@ -5,6 +5,7 @@ import {
   HiArrowRightOnRectangle,
   HiOutlineUser,
   HiOutlineRss,
+  HiOutlineShieldCheck,
 } from 'react-icons/hi2';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -20,6 +21,12 @@ const links = [
     name: 'Orders',
     href: '/dummy-tickets',
     icon: HiOutlineTicket,
+    accessTo: ['admin', 'agent'],
+  },
+  {
+    name: 'Insurance',
+    href: '/insurance',
+    icon: HiOutlineShieldCheck,
     accessTo: ['admin', 'agent'],
   },
   {
@@ -41,6 +48,27 @@ const links = [
     action: 'logout',
   },
 ];
+
+export default function Navigation() {
+  return (
+    <div className="bg-primary-800 p-4">
+      <div className="h-full flex flex-col justify-center">
+        <div>
+          {links.map((link, i) => (
+            <SidebarLink
+              key={i}
+              name={link.name}
+              href={link.href}
+              Icon={link.icon}
+              accessTo={link.accessTo}
+              action={link.action}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function SidebarLink({ name, href, Icon, accessTo, action }) {
   const { user, logout } = useAuth();
@@ -70,17 +98,5 @@ function SidebarLink({ name, href, Icon, accessTo, action }) {
       <Icon className="w-5 h-5" />
       <span className="text-[15px]">{name}</span>
     </NavLink>
-  );
-}
-
-export default function Navigation() {
-  return (
-    <div className="h-full bg-primary-900 p-4 flex flex-col justify-center">
-      <div>
-        {links.map((link, i) => (
-          <SidebarLink key={i} name={link.name} href={link.href} Icon={link.icon} accessTo={link.accessTo} action={link.action} />
-        ))}
-      </div>
-    </div>
   );
 }

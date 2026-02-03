@@ -1,13 +1,15 @@
 import { apiFetch } from '../../../utils/apiClient';
 
+const URL = '/api/users/me';
+
 export async function getMyAccountApi() {
-  return await apiFetch(`/api/users/myAccount`, {
+  return await apiFetch(URL, {
     method: 'GET',
   });
 }
 
 export async function updateAccountApi(data) {
-  return await apiFetch(`/api/users/updateMyAccount`, {
+  return await apiFetch(URL, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -17,17 +19,11 @@ export async function updateAccountApi(data) {
 }
 
 export async function updatePasswordApi(accountData) {
-  return await apiFetch(`/api/users/updateMyPassword`, {
+  return await apiFetch(`${URL}/password`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(accountData),
-  });
-}
-
-export async function deleteAccountApi() {
-  return await apiFetch(`/api/users/deleteMyAccount`, {
-    method: 'DELETE',
   });
 }

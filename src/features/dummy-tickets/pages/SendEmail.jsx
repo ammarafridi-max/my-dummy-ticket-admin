@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useAuth } from '../../../context/AuthContext'
 import { capitalCase } from 'change-case';
 import { useGetDummyTicket } from '../hooks/useGetDummyTicket';
 import { useSendEmail } from '../hooks/useSendEmail';
+import { useUpdateDummyTicket } from '../hooks/useUpdateDummyTicket';
 import toast from 'react-hot-toast';
 import FormRow from '../../../components/FormElements/FormRow';
 import Input from '../../../components/FormElements/Input';
@@ -28,42 +30,47 @@ function generateEmailTemplate(templateName) {
 
 export default function MDTSendEmail() {
   const [searchParams] = useSearchParams();
+  const sessionId = searchParams.get('sessionId')
+  const { user } = useAuth();
+  const { updateDummyTicket, isUpdatingDummyTicket } = useUpdateDummyTicket();
+  const { dummyTicket, isLoadingDummyTicket } = useGetDummyTicket(sessionId);
+  const { sendEmail, isSendingEmail } = useSendEmail();
+  
+
   const [email, setEmail] = useState('');
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
   const [reservation, setReservation] = useState(null);
-  const { dummyTicket, isLoadingDummyTicket } = useGetDummyTicket(searchParams.get('sessionId'));
-  const { sendEmail, isSendingEmail } = useSendEmail();
-  const btnDisabled = !email || !subject || !body || !reservation?.name;
-  const jwtData = useJwtData();
+  const [leadPassenger, setLeadPassenger] = useState('')
+  
+  const btnDisabled = !email || !subject || !body || !reservation?.name || isLoadingDummyTicket || isUpdatingDummyTicket
 
   useEffect(() => {
-    if (searchParams.get('template')) {
-      const { subject, body } = generateEmailTemplate(searchParams.get('template'));
+    if (dummyTicket?.email) setEmail(dummyTicket.email)
+  }, [dummyTicket, email])
+
+  useEffect(() => {
+    if (dummyTicket?.leadPassenger) setLeadPassenger(dummyTicket?.leadPassenger || '')
+  }, [dummyTicket])
+
+  useEffect(() => {
+    const templateName = searchParams.get('template')
+    if (templateName) {
+      const { subject, body } = generateEmailTemplate(templateName);
       const updatedBody = body
-        .replace('{leadPassenger}', capitalCase(dummyTicket?.passengers[0]?.firstName || '') || '')
-        .replace('{agent}', capitalCase(jwtData?.name?.split(' ')[0]));
+        .replace('{leadPassenger}', capitalCase(leadPassenger) || '')
+        .replace('{agent}', capitalCase(user?.name?.split(' ')[0]));
       setSubject(subject);
       setBody(updatedBody);
     }
-  }, []);
-
-  useEffect(() => {
-    if (searchParams.get('sessionId')) {
-      setEmail(dummyTicket?.email);
-    }
-  }, []);
+  }, [searchParams, leadPassenger, user]);
 
   function handleSubmit(e) {
     e.preventDefault();
 
-    if ((!email, !subject, !body)) {
-      return toast.error('Please fill the email, subject, and body fields');
-    }
+    if ((!email, !subject, !body)) return toast.error('Please fill the email, subject, and body fields');
 
-    if (!reservation?.name) {
-      return toast.error('Please attach a reservation file');
-    }
+    if (!reservation?.name) return toast.error('Please attach a reservation file');
 
     const formData = new FormData();
     formData.append('email', email);
@@ -73,7 +80,9 @@ export default function MDTSendEmail() {
       formData.append('reservation', reservation);
     }
 
-    sendEmail(formData);
+    if (sendEmail(formData)) {
+      updateDummyTicket({ sessionId, orderStatus: 'DELIVERED' })
+    }
   }
 
   if (isLoadingDummyTicket || isSendingEmail) return <Loading />;
@@ -87,7 +96,7 @@ export default function MDTSendEmail() {
         ]}
       />
       <PageHeading>Send Email</PageHeading>
-      <div className="bg-white px-10 py-6 rounded-lg shadow-md">
+      <div className="flex flex-col gap-5 bg-white px-10 py-6 rounded-lg shadow-md">
         <FormRow>
           <Label>Email Address</Label>
           <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -98,7 +107,7 @@ export default function MDTSendEmail() {
         </FormRow>
         <FormRow>
           <Label>Body</Label>
-          <Textarea value={body} onChange={(e) => setBody(e.target.value)} />
+          <Textarea rows={10} value={body} onChange={(e) => setBody(e.target.value)} />
         </FormRow>
         <FormRow>
           <Label>Reservation</Label>
@@ -107,7 +116,7 @@ export default function MDTSendEmail() {
             {reservation && <p className="text-sm mt-2">Selected: {reservation?.name}</p>}
           </div>
         </FormRow>
-        <PrimaryButton type="submit" onClick={handleSubmit} disabled={isSendingEmail}>
+        <PrimaryButton type="submit" onClick={handleSubmit} disabled={btnDisabled}>
           Send Email
         </PrimaryButton>
       </div>

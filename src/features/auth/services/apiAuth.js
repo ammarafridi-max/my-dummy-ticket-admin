@@ -9,6 +9,7 @@ export async function loginApi(credentials) {
     body: JSON.stringify(credentials),
   });
 }
+
 export async function getMeApi() {
-  return await apiFetch('/api/users/myAccount');
+  return await apiFetch('/api/users/me');
 }

@@ -1,9 +1,9 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useSearchParams } from 'react-router-dom';
 import { useDummyTickets } from '../hooks/useDummyTickets';
 import { extractIataCode } from '../../../utils/extractIataCode';
 import { convertToDubaiDate } from '../../../utils/dateFunctions';
-import { useSearchParams } from 'react-router-dom';
 import PageHeading from '../../../components/PageHeading';
 import Table from '../../../components/Table';
 import SuccessPill from '../../../components/SuccessPill';
@@ -13,10 +13,8 @@ import WarningPill from '../../../components/WarningPill';
 import Filter from './../components/Filter';
 import Breadcrumb from '../../../components/Breadcrumb';
 import Loading from '../../../components/Loading';
-import { useAuth } from '../../../context/AuthContext';
 
 export default function DummyTickets() {
-  const { role } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const { dummyTickets, pagination, isLoadingDummyTickets, isErrorDummyTickets } = useDummyTickets();
 
@@ -35,13 +33,18 @@ export default function DummyTickets() {
       <Helmet>
         <title>Dummy Tickets</title>
       </Helmet>
-      <Breadcrumb
-        paths={[
-          { label: 'Home', href: '/' },
-          { label: 'Dummy Tickets', href: '/dummy-tickets' },
-        ]}
-      />
-      <PageHeading mb="15px">Dummy Tickets</PageHeading>
+      <div className='flex items-center justify-between gap-5'>
+        <div>
+          <Breadcrumb
+            paths={[
+              { label: 'Home', href: '/' },
+              { label: 'Dummy Tickets', href: '/dummy-tickets' },
+            ]}
+            />
+          <PageHeading mb="15px">Dummy Tickets</PageHeading>
+        </div>
+        <div></div>
+      </div>
       <Filter />
       {isLoadingDummyTickets && <Loading />}
       {isErrorDummyTickets && <p>Error loading dummy tickets</p>}

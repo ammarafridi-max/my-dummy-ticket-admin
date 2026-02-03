@@ -4,6 +4,8 @@ import { useDeleteDummyTicket } from '../hooks/useDeleteDummyTicket';
 import { convertToDubaiTime } from '../../../utils/timeFunctions';
 import { convertToDubaiDate } from '../../../utils/dateFunctions';
 import { format } from 'date-fns';
+import { capitalCase } from 'change-case';
+import { MdWhatsapp } from 'react-icons/md';
 import Breadcrumb from '../../../components/Breadcrumb';
 import PageHeading from '../../../components/PageHeading';
 import Label from '../../../components/FormElements/Label';
@@ -12,6 +14,8 @@ import SectionHeading from '../../../components/SectionHeading';
 import Loading from '../../../components/Loading';
 import PrimaryButton from '../../../components/PrimaryButton';
 import DeleteButton from '../../../components/DeleteButton';
+import ActionButtons from '../../../components/ActionButtons';
+import { Check, Pencil, Trash } from 'lucide-react';
 
 function FormRow({ children }) {
   return <div className="grid grid-cols-[4fr_8fr] items-center">{children}</div>;
@@ -25,17 +29,51 @@ export default function DummyTicketDetail({}) {
 
   return (
     <div>
-      <Breadcrumb
-        paths={[
-          { label: 'Home', href: '/' },
-          { label: 'Dummy Tickets', href: '/dummy-tickets' },
-          {
-            label: `${dummyTicket?.leadPassenger}`,
-            href: `/dummy-tickets/${sessionId}`,
-          },
-        ]}
-      />
-      <PageHeading>{dummyTicket?.leadPassenger}</PageHeading>
+      <div className="flex items-center justify-between gap-5">
+        <div>
+          <Breadcrumb
+            paths={[
+              { label: 'Home', href: '/' },
+              { label: 'Dummy Tickets', href: '/dummy-tickets' },
+            ]}
+          />
+          <PageHeading>{capitalCase(dummyTicket?.leadPassenger)}</PageHeading>
+        </div>
+        <div>
+          <ActionButtons
+            actions={[
+              {
+                text: 'Mark as done',
+                icon: Check,
+                onClick: () => {
+                  console.log('Hello');
+                },
+              },
+              {
+                text: 'Edit',
+                icon: Pencil,
+                onClick: () => {
+                  console.log('Hello');
+                },
+              },
+              {
+                text: 'Share on WhatsApp',
+                icon: MdWhatsapp,
+                onClick: () => {
+                  console.log('Hello');
+                },
+              },
+              {
+                text: 'Delete',
+                icon: Trash,
+                onClick: () => {
+                  console.log('Hello');
+                },
+              },
+            ]}
+          />
+        </div>
+      </div>
       <BasicInfo dummyTicket={dummyTicket} />
       <TripDetails dummyTicket={dummyTicket} />
       <Passengers dummyTicket={dummyTicket} />
@@ -47,13 +85,12 @@ export default function DummyTicketDetail({}) {
 function BasicInfo({ dummyTicket }) {
   return (
     <div className="bg-white px-10 py-6 rounded-lg shadow-md grid grid-cols-2 gap-x-10 gap-y-4 mt-10">
-      <FormRow>
-        <Label>Submission</Label>
-        <Input
-          value={`${convertToDubaiTime(dummyTicket?.createdAt)} ${convertToDubaiDate(dummyTicket?.createdAt, 'long')}`}
-          disabled={true}
-        />
-      </FormRow>
+      <div className="grid grid-cols-[3fr_10fr] gap-3">
+        <p className="font-light">Submission:</p>
+        <p className="font-light">
+          {convertToDubaiTime(dummyTicket?.createdAt)} {convertToDubaiDate(dummyTicket?.createdAt, 'long')}
+        </p>
+      </div>
       <FormRow>
         <Label>Delivery Date</Label>
         <Input
