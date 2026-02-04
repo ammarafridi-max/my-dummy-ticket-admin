@@ -7,8 +7,9 @@ export function useBlog(id) {
     isLoading: isLoadingBlog,
     isError: isErrorBlog,
   } = useQuery({
-    queryKey: ['blog'],
+    queryKey: ['blog', id],
     queryFn: () => getBlogByIdApi(id),
+    enabled: !!id,
   });
 
   return { blog, isLoadingBlog, isErrorBlog };

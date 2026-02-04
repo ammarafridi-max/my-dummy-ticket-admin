@@ -1,15 +1,16 @@
 import { BACKEND } from '../../../config';
-import { apiFetch } from '../../../utils/apiClient';
+import { apiFetch } from '../../../services/apiClient';
 
 const URL = `/api/blogs`;
 
-export function getAllBlogsApi({ page = 1, limit = 10, status, tag, search } = {}) {
+export async function getAllBlogsApi({ page = 1, limit = 10, status, tag, search } = {}) {
   const params = new URLSearchParams({ page, limit });
   if (status) params.append('status', status);
   if (tag) params.append('tag', tag);
   if (search) params.append('search', search);
 
-  return apiFetch(`${URL}?${params.toString()}`);
+  const data = await apiFetch(`${URL}?${params.toString()}`);
+  return data;
 }
 
 export function getBlogBySlugApi(slug) {

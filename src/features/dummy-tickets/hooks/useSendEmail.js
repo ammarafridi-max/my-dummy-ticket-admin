@@ -15,12 +15,13 @@ export function useSendEmail() {
     mutationFn: (formData) => sendEmailApi(formData),
     onSuccess: () => {
       toast.success('Email sent successfully');
-      queryClient.invalidateQueries({ queryKey: [''] });
+      queryClient.invalidateQueries({ queryKey: ['dummytickets'] });
+      queryClient.invalidateQueries({ queryKey: ['dummyticket'] });
       updateDummyTicket({
         sessionId: searchParams.get('sessionId'),
         orderStatus: 'DELIVERED',
       });
-      navigate('/mdt/dummy-tickets');
+      navigate('/dummy-tickets');
     },
 
     onError: () => {

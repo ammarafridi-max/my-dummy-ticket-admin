@@ -1,3 +1,4 @@
+import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import 'react-tooltip/dist/react-tooltip.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';

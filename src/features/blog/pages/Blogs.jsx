@@ -11,10 +11,12 @@ import SuccessPill from '../../../components/SuccessPill';
 import Breadcrumb from '../../../components/Breadcrumb';
 import PageHeading from '../../../components/PageHeading';
 import Table from '../../../components/Table';
+import { useAuth } from '../../../context/AuthContext';
 
 export default function Blogs() {
   const { blogs, isLoadingBlogs, isErrorBlogs } = useBlogs();
   const { duplicateBlog, isDuplicatingBlog } = useDuplicateBlog();
+  const { isAdmin } = useAuth();
 
   return (
     <>
@@ -64,12 +66,14 @@ export default function Blogs() {
         </Table>
       )}
 
-      <Link
-        className="absolute bottom-10 right-10 bg-primary-600 hover:bg-primary-700 cursor-pointer duration-300 p-4 text-white text-2xl rounded-full"
-        to="/blogs/create"
-      >
-        <FaPlus />
-      </Link>
+      {isAdmin && (
+        <Link
+          className="absolute bottom-10 right-10 bg-primary-600 hover:bg-primary-700 cursor-pointer duration-300 p-4 text-white text-2xl rounded-full"
+          to="/blogs/create"
+        >
+          <FaPlus />
+        </Link>
+      )}
     </>
   );
 }

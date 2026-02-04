@@ -1,31 +1,98 @@
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { useGetDummyTicket } from '../hooks/useGetDummyTicket';
 import { useDeleteDummyTicket } from '../hooks/useDeleteDummyTicket';
+import { useRefundDummyTicket } from '../hooks/useRefundDummyTicket';
+import { useUpdateDummyTicket } from '../hooks/useUpdateDummyTicket';
 import { convertToDubaiTime } from '../../../utils/timeFunctions';
 import { convertToDubaiDate } from '../../../utils/dateFunctions';
+import { extractIataCode } from '../../../utils/extractIataCode';
 import { format } from 'date-fns';
 import { capitalCase } from 'change-case';
+import { confirmAlert } from 'react-confirm-alert';
 import { MdWhatsapp } from 'react-icons/md';
+import { Check, Pencil, Trash, Undo } from 'lucide-react';
 import Breadcrumb from '../../../components/Breadcrumb';
 import PageHeading from '../../../components/PageHeading';
-import Label from '../../../components/FormElements/Label';
-import Input from '../../../components/FormElements/Input';
-import SectionHeading from '../../../components/SectionHeading';
 import Loading from '../../../components/Loading';
-import PrimaryButton from '../../../components/PrimaryButton';
-import DeleteButton from '../../../components/DeleteButton';
 import ActionButtons from '../../../components/ActionButtons';
-import { Check, Pencil, Trash } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { useAuth } from '../../../context/AuthContext';
 
-function FormRow({ children }) {
-  return <div className="grid grid-cols-[4fr_8fr] items-center">{children}</div>;
-}
-
-export default function DummyTicketDetail({}) {
+export default function DummyTicketDetail() {
   const { sessionId } = useParams();
   const { dummyTicket, isLoadingDummyTicket } = useGetDummyTicket(sessionId);
+  const { deleteDummyTicket, isDeleting } = useDeleteDummyTicket();
+  const { refundDummyTicket, isRefunding } = useRefundDummyTicket();
+  const { updateDummyTicket, isUpdating } = useUpdateDummyTicket();
+  const [activeTab, setActiveTab] = useState('information');
+  const { isAdmin } = useAuth();
 
   if (isLoadingDummyTicket) return <Loading />;
+
+  function handleShareWhatsApp() {
+    if (!dummyTicket) return;
+
+    const fromCode = extractIataCode(dummyTicket?.from);
+    const toCode = extractIataCode(dummyTicket?.to);
+    const fromText = `${dummyTicket?.from || ''} (${fromCode || '-'})`.trim();
+    const toText = `${dummyTicket?.to || ''} (${toCode || '-'})`.trim();
+    const departureDate = dummyTicket?.departureDate ? format(new Date(dummyTicket.departureDate), 'dd MMM yyyy') : '-';
+    const returnDate =
+      dummyTicket?.type?.toLowerCase() === 'return' && dummyTicket?.returnDate
+        ? format(new Date(dummyTicket.returnDate), 'dd MMM yyyy')
+        : null;
+
+    const depFlight = dummyTicket?.flightDetails?.departureFlight?.segments?.[0];
+    const retFlight = dummyTicket?.flightDetails?.returnFlight?.segments?.[0];
+    const depFlightText = depFlight ? `${depFlight.carrierCode || ''} ${depFlight.flightNumber || ''}`.trim() : '-';
+    const retFlightText =
+      dummyTicket?.type?.toLowerCase() === 'return' && retFlight
+        ? `${retFlight.carrierCode || ''} ${retFlight.flightNumber || ''}`.trim()
+        : null;
+
+    const deliveryText = dummyTicket?.ticketDelivery?.immediate
+      ? 'Immediate'
+      : dummyTicket?.ticketDelivery?.deliveryDate
+        ? format(new Date(dummyTicket.ticketDelivery.deliveryDate), 'dd MMM yyyy')
+        : '-';
+
+    const phone =
+      dummyTicket?.phoneNumber?.code && dummyTicket?.phoneNumber?.digits
+        ? `${dummyTicket.phoneNumber.code}-${dummyTicket.phoneNumber.digits}`
+        : '-';
+
+    const passengerLines = dummyTicket?.passengers?.length
+      ? dummyTicket.passengers.map((p, i) => `${i + 1}. ${p.title || ''} ${p.firstName || ''} ${p.lastName || ''}`.trim())
+      : ['-'];
+
+    const messageLines = [
+      `From: ${fromText}`,
+      `To: ${toText}`,
+      `Departure: ${departureDate}`,
+      ...(returnDate ? [`Return: ${returnDate}`] : []),
+      '',
+      `Departure Flight: ${depFlightText}`,
+      ...(retFlightText ? [`Return Flight: ${retFlightText}`] : []),
+      '',
+      'Passengers:',
+      ...passengerLines,
+      '',
+      `Ticket Validity: ${dummyTicket?.ticketValidity || '-'}`,
+      `Ticket Delivery: ${deliveryText}`,
+      '',
+      `Email: ${dummyTicket?.email || '-'}`,
+      `Mobile: ${phone}`,
+    ];
+
+    if (dummyTicket?.message) {
+      messageLines.push('', `Message: *${dummyTicket.message}*`);
+    }
+
+    const text = messageLines.join('\n');
+    const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
+  }
 
   return (
     <div>
@@ -35,161 +102,155 @@ export default function DummyTicketDetail({}) {
             paths={[
               { label: 'Home', href: '/' },
               { label: 'Dummy Tickets', href: '/dummy-tickets' },
+              { label: capitalCase(dummyTicket?.leadPassenger), href: `/dummy-tickets/${sessionId}` },
             ]}
           />
           <PageHeading>{capitalCase(dummyTicket?.leadPassenger)}</PageHeading>
         </div>
-        <div>
-          <ActionButtons
-            actions={[
-              {
-                text: 'Mark as done',
-                icon: Check,
-                onClick: () => {
-                  console.log('Hello');
-                },
-              },
-              {
-                text: 'Edit',
-                icon: Pencil,
-                onClick: () => {
-                  console.log('Hello');
-                },
-              },
-              {
-                text: 'Share on WhatsApp',
-                icon: MdWhatsapp,
-                onClick: () => {
-                  console.log('Hello');
-                },
-              },
-              {
-                text: 'Delete',
-                icon: Trash,
-                onClick: () => {
-                  console.log('Hello');
-                },
-              },
-            ]}
-          />
-        </div>
+
+        <ActionButtons
+          actions={[
+            ...(dummyTicket?.orderStatus !== 'DELIVERED'
+              ? [
+                  {
+                    text: 'Mark as done',
+                    icon: Check,
+                    loading: isDeleting || isRefunding || isUpdating,
+                    onClick: () => updateDummyTicket({ sessionId, orderStatus: 'DELIVERED' }),
+                  },
+                ]
+              : []),
+            ...(dummyTicket?.orderStatus !== 'PROGRESS'
+              ? [
+                  {
+                    text: 'Mark as progress',
+                    icon: Pencil,
+                    loading: isDeleting || isRefunding || isUpdating,
+                    onClick: () => updateDummyTicket({ sessionId, orderStatus: 'PROGRESS' }),
+                  },
+                ]
+              : []),
+            ...(dummyTicket?.orderStatus !== 'PENDING'
+              ? [
+                  {
+                    text: 'Mark as pending',
+                    icon: Pencil,
+                    loading: isDeleting || isRefunding || isUpdating,
+                    onClick: () => updateDummyTicket({ sessionId, orderStatus: 'PENDING' }),
+                  },
+                ]
+              : []),
+            { text: 'Edit', icon: Pencil, loading: isDeleting || isRefunding || isUpdating, onClick: () => {} },
+            {
+              text: 'Share on WhatsApp',
+              icon: MdWhatsapp,
+              loading: isDeleting || isRefunding || isUpdating,
+              onClick: handleShareWhatsApp,
+            },
+            ...(isAdmin
+              ? [
+                  {
+                    text: 'Delete',
+                    icon: Trash,
+                    loading: isDeleting || isRefunding || isUpdating,
+                    disabled: dummyTicket?.paymentStatus === 'PAID',
+                    onClick: () => {
+                      confirmAlert({
+                        title: 'Confirm to delete',
+                        message: 'Are you sure you want to delete this record?',
+                        buttons: [
+                          {
+                            label: 'Delete',
+                            onClick: () => deleteDummyTicket(sessionId),
+                          },
+                          {
+                            label: 'Cancel',
+                            onClick: () => toast.error('Delete cancelled'),
+                          },
+                        ],
+                      });
+                    },
+                  },
+                  {
+                    text: 'Refund',
+                    icon: Undo,
+                    loading: isDeleting || isRefunding || isUpdating,
+                    disabled: dummyTicket?.paymentStatus !== 'PAID' || !dummyTicket?.transactionId,
+                    onClick: () => refundDummyTicket(dummyTicket?.transactionId),
+                  },
+                ]
+              : []),
+          ]}
+        />
       </div>
-      <BasicInfo dummyTicket={dummyTicket} />
-      <TripDetails dummyTicket={dummyTicket} />
-      <Passengers dummyTicket={dummyTicket} />
-      <Actions dummyTicket={dummyTicket} />
+
+      <div className="flex items-center gap-3">
+        {[
+          { label: 'Information', value: 'information' },
+          { label: 'Trip', value: 'trip' },
+          { label: 'Passengers', value: 'passengers' },
+        ].map((item) => (
+          <button
+            key={item.value}
+            className={`font-light text-[12px] px-4 py-2 shadow-sm rounded-md duration-200 cursor-pointer ${
+              activeTab === item.value ? 'bg-primary-500 text-white' : 'bg-white hover:bg-primary-50'
+            }`}
+            onClick={() => setActiveTab(item.value)}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+
+      {activeTab === 'information' && <BasicInfo dummyTicket={dummyTicket} isAdmin={isAdmin} />}
+      {activeTab === 'trip' && <TripDetails dummyTicket={dummyTicket} />}
+      {activeTab === 'passengers' && <Passengers dummyTicket={dummyTicket} />}
     </div>
   );
 }
 
-function BasicInfo({ dummyTicket }) {
+function BasicInfo({ dummyTicket, isAdmin }) {
   return (
-    <div className="bg-white px-10 py-6 rounded-lg shadow-md grid grid-cols-2 gap-x-10 gap-y-4 mt-10">
-      <div className="grid grid-cols-[3fr_10fr] gap-3">
-        <p className="font-light">Submission:</p>
-        <p className="font-light">
-          {convertToDubaiTime(dummyTicket?.createdAt)} {convertToDubaiDate(dummyTicket?.createdAt, 'long')}
-        </p>
-      </div>
-      <FormRow>
-        <Label>Delivery Date</Label>
-        <Input
-          value={
-            dummyTicket?.ticketDelivery?.immediate
-              ? 'Immediate'
-              : format(dummyTicket?.ticketDelivery?.deliveryDate, 'dd MMMM yyyy')
-          }
-          disabled={true}
-        />
-      </FormRow>
-      <FormRow>
-        <Label>Type</Label>
-        <Input value={`${dummyTicket?.type} Flight Reservation`} disabled={true} />
-      </FormRow>
-      <FormRow>
-        <Label>Ticket Validity</Label>
-        <Input value={dummyTicket?.ticketValidity} disabled={true} />
-      </FormRow>
-      <FormRow>
-        <Label>Payment Status</Label>
-        <Input value={dummyTicket?.paymentStatus === 'PAID' ? 'Paid' : 'Unpaid'} disabled={true} />
-      </FormRow>
-      {dummyTicket?.paymentStatus === 'PAID' ? (
-        <FormRow>
-          <Label>Amount Paid</Label>
-          <Input value={`${dummyTicket?.amountPaid?.currency} ${dummyTicket?.amountPaid?.amount}`} disabled={true} />
-        </FormRow>
-      ) : (
-        <FormRow></FormRow>
+    <div className="bg-white px-6 py-4 rounded-lg shadow-sm grid grid-cols-3 gap-x-6 gap-y-6 mt-6 text-sm">
+      <Info
+        label="Submitted"
+        value={`${convertToDubaiDate(dummyTicket?.createdAt)} ${convertToDubaiTime(dummyTicket?.createdAt)}`}
+      />
+      <Info label="Lead Passenger" value={dummyTicket?.leadPassenger} />
+      <Info label="Email" value={dummyTicket?.email} />
+      <Info label="Phone" value={`${dummyTicket?.phoneNumber?.code}-${dummyTicket?.phoneNumber?.digits}`} />
+      <Info label="Type" value={`${dummyTicket?.type} Flight`} />
+      <Info label="Ticket Validity" value={dummyTicket?.ticketValidity} />
+      <Info label="Order Status" value={dummyTicket?.orderStatus} />
+      <Info label="Payment" value={dummyTicket?.paymentStatus} />
+      {isAdmin && dummyTicket?.amountPaid && (
+        <Info label="Amount" value={`${dummyTicket?.amountPaid?.currency} ${dummyTicket?.amountPaid?.amount}`} />
       )}
-      <FormRow>
-        <Label>Order Status</Label>
-        <Input className="capitalize" value={dummyTicket?.orderStatus?.toLowerCase()} disabled={true} />
-      </FormRow>
-      <FormRow>
-        <Label>Handled By</Label>
-        <Input className="capitalize" value={dummyTicket?.handledBy?.name || ''} disabled={true} />
-      </FormRow>
-      <FormRow>
-        <Label>Lead Passenger</Label>
-        <Input className="capitalize" value={dummyTicket?.leadPassenger?.toLowerCase()} disabled={true} />
-      </FormRow>
-      <FormRow>
-        <Label>Email Address</Label>
-        <Input value={dummyTicket?.email} disabled={true} />
-      </FormRow>
-      <FormRow>
-        <Label>Phone Number</Label>
-        <Input value={`${dummyTicket?.phoneNumber.code}-${dummyTicket?.phoneNumber?.digits}`} disabled={true} />
-      </FormRow>
-      {dummyTicket?.message && (
-        <FormRow>
-          <Label>Message</Label>
-          <Input value={dummyTicket?.message || ''} disabled={true} />
-        </FormRow>
-      )}
+      <Info label="Handled By" value={dummyTicket?.handledBy?.name || '-'} />
+      {dummyTicket?.message && <Info label="Message" value={dummyTicket?.message} />}
     </div>
   );
 }
 
 function TripDetails({ dummyTicket }) {
   return (
-    <div className="bg-white px-10 py-6 rounded-lg shadow-md mt-10">
-      <SectionHeading>Trip Details</SectionHeading>
-      <div className="grid grid-cols-2 gap-x-10 gap-y-4 ">
-        <FormRow>
-          <Label>Traveling From</Label>
-          <Input value={dummyTicket?.from} disabled={true} />
-        </FormRow>
-        <FormRow>
-          <Label>Traveling To</Label>
-          <Input value={dummyTicket?.to} disabled={true} />
-        </FormRow>
-        <FormRow>
-          <Label>Departure Date</Label>
-          <Input value={format(dummyTicket?.departureDate, 'dd MMMM yyyy')} disabled={true} />
-        </FormRow>
-        {dummyTicket?.type.toLowerCase() === 'return' && (
-          <FormRow>
-            <Label>Return Date</Label>
-            <Input value={format(dummyTicket?.returnDate, 'dd MMMM yyyy')} disabled={true} />
-          </FormRow>
-        )}
-        <FormRow>
-          <Label>Departure Flight</Label>
-          <Input
-            value={`${dummyTicket?.flightDetails?.departureFlight?.segments[0]?.carrierCode} ${dummyTicket?.flightDetails?.departureFlight?.segments[0]?.flightNumber}`}
-            disabled={true}
-          />
-        </FormRow>
+    <div className="bg-white px-6 py-4 rounded-lg shadow-sm mt-4 text-sm">
+      <div className="grid grid-cols-3 gap-x-6 gap-y-6 mt-2">
+        <Info label="From" value={dummyTicket?.from} />
+        <Info label="To" value={dummyTicket?.to} />
+        <Info label="Departure" value={format(new Date(dummyTicket?.departureDate), 'dd MMM yyyy')} />
         {dummyTicket?.type?.toLowerCase() === 'return' && (
-          <FormRow>
-            <Label>Return Flight</Label>
-            <Input
-              value={`${dummyTicket?.flightDetails?.returnFlight?.segments[0]?.carrierCode} ${dummyTicket?.flightDetails?.returnFlight?.segments[0]?.flightNumber}`}
-              disabled={true}
-            />
-          </FormRow>
+          <Info label="Return" value={format(new Date(dummyTicket?.returnDate), 'dd MMM yyyy')} />
+        )}
+        <Info
+          label="Departure Flight"
+          value={`${dummyTicket?.flightDetails?.departureFlight?.segments[0]?.carrierCode} ${dummyTicket?.flightDetails?.departureFlight?.segments[0]?.flightNumber}`}
+        />
+        {dummyTicket?.type?.toLowerCase() === 'return' && (
+          <Info
+            label="Return Flight"
+            value={`${dummyTicket?.flightDetails?.returnFlight?.segments[0]?.carrierCode} ${dummyTicket?.flightDetails?.returnFlight?.segments[0]?.flightNumber}`}
+          />
         )}
       </div>
     </div>
@@ -198,66 +259,25 @@ function TripDetails({ dummyTicket }) {
 
 function Passengers({ dummyTicket }) {
   return (
-    <div className="bg-white px-10 py-6 rounded-lg shadow-md mt-10">
-      <SectionHeading>Passengers</SectionHeading>
-      <div className="grid grid-cols-2 gap-x-10 gap-y-4 ">
-        {dummyTicket?.passengers.map((passenger, i) => (
-          <FormRow key={i}>
-            <Label>{passenger?.type}</Label>
-            <Input
-              className="capitalize"
-              value={`${passenger?.title} ${passenger?.firstName?.toLowerCase()} / ${passenger?.lastName?.toLowerCase()}`}
-              disabled={true}
-            />
-          </FormRow>
+    <div className="bg-white px-6 py-4 rounded-lg shadow-sm mt-4 text-sm">
+      <div className="grid grid-cols-2 gap-x-6 gap-y-6 mt-2">
+        {dummyTicket?.passengers?.map((p, i) => (
+          <Info
+            key={i}
+            label={`Passenger ${i + 1}`}
+            value={`${p.title} ${capitalCase(p.firstName)} / ${capitalCase(p.lastName)}`}
+          />
         ))}
       </div>
     </div>
   );
 }
 
-function Actions({ dummyTicket }) {
-  const navigate = useNavigate();
-  const { deleteDummyTicket, isDeleting } = useDeleteDummyTicket();
-  const [searchParams] = useSearchParams();
-
-  const handleSendReservation = () => {
-    navigate(`/send-email?template=createReservation&sessionId=${dummyTicket?.sessionId}`);
-  };
-
+function Info({ label, value }) {
   return (
-    <div className="bg-white px-10 py-6 rounded-lg shadow-md mt-10">
-      <SectionHeading>Quick Actions</SectionHeading>
-      <div className="flex gap-3">
-        {dummyTicket?.paymentStatus === 'PAID' && (
-          <PrimaryButton
-            onClick={() => navigate(`/send-email?template=createReservation&sessionId=${dummyTicket?.sessionId}`)}
-            disabled={isDeleting}
-          >
-            Send Reservation
-          </PrimaryButton>
-        )}
-        {/* {dummyTicket?.paymentStatus === 'PAID' &&
-          (dummyTicket?.orderStatus === 'PENDING' ||
-            (dummyTicket?.orderStatus === 'PROGRESS' && (
-            <PrimaryButton
-              onClick={() =>
-                navigate(
-                  `/send-email?template=createReservation&sessionId=${dummyTicket?.sessionId}`
-                )
-              }
-              disabled={isDeleting}
-            >
-              Send Reservation
-            </PrimaryButton>
-          )} */}
-
-        {dummyTicket?.paymentStatus !== 'PAID' && (
-          <DeleteButton onClick={() => deleteDummyTicket(dummyTicket?.sessionId)} disabled={isDeleting}>
-            Delete Reservation
-          </DeleteButton>
-        )}
-      </div>
+    <div className="flex flex-col">
+      <span className="font-extralight text-sm text-gray-500">{label}</span>
+      <span className="font-light text-lg truncate">{value || '-'}</span>
     </div>
   );
 }

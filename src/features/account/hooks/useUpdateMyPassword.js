@@ -1,18 +1,18 @@
 import { useMutation } from '@tanstack/react-query';
 import { updatePasswordApi } from '../services/apiAccount';
-import { toast } from 'react-toastify';
+import toast from 'react-hot-toast';
 
 export function useUpdateMyPassword() {
-  const { mutate: updatePassword, isLoading } = useMutation({
+  const { mutateAsync: updatePassword, isPending: isUpdating } = useMutation({
     mutationKey: ['account'],
     mutationFn: (data) => updatePasswordApi(data),
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast.success('Password updated successfully!');
     },
-    onError: (err) => {
+    onError: () => {
       toast.error('Could not update password.');
     },
   });
 
-  return { updatePassword, isLoading };
+  return { updatePassword, isUpdating };
 }

@@ -5,11 +5,34 @@ import { useRef } from 'react';
 import BlogForm from '../components/BlogForm';
 import Breadcrumb from '../../../components/Breadcrumb';
 import PageHeading from '../../../components/PageHeading';
+import { useAuth } from '../../../context/AuthContext';
 
 export default function CreateBlogPost() {
   const editorRef = useRef(null);
   const { createBlog, isCreatingBlog } = useCreateBlog();
   const { handleSubmit, register, control } = useForm({});
+  const { isAdmin } = useAuth();
+
+  if (!isAdmin) {
+    return (
+      <>
+        <Helmet>
+          <title>Create Blog Post</title>
+        </Helmet>
+        <Breadcrumb
+          paths={[
+            { label: 'Home', href: '/' },
+            { label: 'Blogs', href: '/blogs' },
+            { label: 'Create Blog Post', href: '/blogs/create' },
+          ]}
+        />
+        <PageHeading>Create Blog Post</PageHeading>
+        <p className="mt-6 bg-white p-6 rounded-lg shadow text-sm text-gray-600">
+          You do not have permission to create blog posts.
+        </p>
+      </>
+    );
+  }
 
   function onSubmit(data) {
     const formData = new FormData();

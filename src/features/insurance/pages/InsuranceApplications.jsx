@@ -11,10 +11,12 @@ import WarningPill from '../../../components/WarningPill';
 import Filter from '../components/Filter';
 import Breadcrumb from '../../../components/Breadcrumb';
 import Loading from '../../../components/Loading';
+import { useAuth } from '../../../context/AuthContext';
 
 export default function InsuranceApplications() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { applications, pagination, isLoadingApplications, isErrorApplications } = useInsuranceApplications();
+  const { isAdmin } = useAuth();
 
   const currentPage = parseInt(searchParams.get('page')) || 1;
   const limit = parseInt(searchParams.get('limit')) || 100;
@@ -26,21 +28,19 @@ export default function InsuranceApplications() {
     setSearchParams(newParams);
   };
 
-  console.log(applications)
-
   return (
     <>
       <Helmet>
-        <title>Dummy Tickets</title>
+        <title>Insurance Applications</title>
       </Helmet>
-      <div className='flex items-center justify-between gap-5'>
+      <div className="flex items-center justify-between gap-5">
         <div>
           <Breadcrumb
             paths={[
               { label: 'Home', href: '/' },
               { label: 'Insurance Applications', href: '/insurance' },
             ]}
-            />
+          />
           <PageHeading mb="15px">Insurance Applications</PageHeading>
         </div>
         <div></div>
@@ -49,13 +49,13 @@ export default function InsuranceApplications() {
       {isLoadingApplications && <Loading />}
       {isErrorApplications && <p>Error loading insurance applications</p>}
       {applications && (
-        <Table $columntemplate="1fr 2fr 1fr 1fr 1fr 1fr">
+        <Table $columntemplate={isAdmin ? '1fr 2fr 1fr 1fr 1fr 1fr' : '1fr 2fr 1fr 1fr 1fr'}>
           <Table.Head>
             <Table.Heading textAlign="left">Date</Table.Heading>
             <Table.Heading textAlign="left">Name</Table.Heading>
             <Table.Heading textAlign="center">Region</Table.Heading>
             <Table.Heading textAlign="center">Journey</Table.Heading>
-            <Table.Heading textAlign="center">Amount</Table.Heading>
+            {isAdmin && <Table.Heading textAlign="center">Amount</Table.Heading>}
             <Table.Heading textAlign="center">Payment</Table.Heading>
           </Table.Head>
 
@@ -74,9 +74,11 @@ export default function InsuranceApplications() {
 
               <Table.Item textAlign="center">{app.journeyType}</Table.Item>
 
-              <Table.Item textAlign="center">
-                {app.amountPaid?.currency} {app.amountPaid?.amount}
-              </Table.Item>
+              {isAdmin && (
+                <Table.Item textAlign="center">
+                  {app.amountPaid?.currency} {app.amountPaid?.amount}
+                </Table.Item>
+              )}
 
               <Table.Item textAlign="center">
                 {app.paymentStatus === 'PAID' ? (

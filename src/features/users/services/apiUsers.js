@@ -1,4 +1,4 @@
-import { apiFetch } from '../../../utils/apiClient';
+import { apiFetch } from '../../../services/apiClient';
 
 export async function getUsers() {
   return await apiFetch(`/api/users`);

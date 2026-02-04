@@ -44,14 +44,17 @@ export default function Filter() {
           setActiveFilterBox={setActiveFilterBox}
         />
         <FilterTemplate
-          id="orderStatus"
-          title="Order Status"
+          id="region"
+          title="Region"
           options={[
             { label: 'All', value: 'all' },
-            { label: 'Pending', value: 'PENDING' },
-            { label: 'Delivered', value: 'DELIVERED' },
+            { label: 'Gulf', value: 'gulf' },
+            { label: 'Europe', value: 'europe' },
+            { label: 'Subcontinent', value: 'subcon' },
+            { label: 'Worldwide Excl. USA/Canada', value: 'worldwide_ex' },
+            { label: 'Worldwide', value: 'worldwide' },
           ]}
-          searchParamsName="orderStatus"
+          searchParamsName="region.id"
           activeFilterBox={activeFilterBox}
           setActiveFilterBox={setActiveFilterBox}
         />

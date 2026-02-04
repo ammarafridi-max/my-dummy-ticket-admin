@@ -1,28 +1,61 @@
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { useGetInsuranceApplication } from '../hooks/useGetInsuranceApplication';
-import { useDeleteInsuranceApplication } from '../hooks/useDeleteInsuranceApplication';
+import { useDownloadInsurancePolicy } from '../hooks/useDownloadInsurancePolicy';
 import { convertToDubaiTime } from '../../../utils/timeFunctions';
 import { convertToDubaiDate } from '../../../utils/dateFunctions';
 import { format } from 'date-fns';
 import { capitalCase } from 'change-case';
 import { MdWhatsapp } from 'react-icons/md';
-import { Download, Pencil, Undo } from 'lucide-react';
+import { Undo } from 'lucide-react';
 import Breadcrumb from '../../../components/Breadcrumb';
 import PageHeading from '../../../components/PageHeading';
 import SectionHeading from '../../../components/SectionHeading';
 import Loading from '../../../components/Loading';
 import PrimaryButton from '../../../components/PrimaryButton';
-import DeleteButton from '../../../components/DeleteButton';
 import ActionButtons from '../../../components/ActionButtons';
-import { useState } from 'react';
-import { useDownloadInsurancePolicy } from '../hooks/useDownloadInsurancePolicy';
+import { useAuth } from '../../../context/AuthContext';
+import toast from 'react-hot-toast';
 
 export default function InsuranceApplicationDetail() {
   const { sessionId } = useParams();
   const { application, isLoadingApplication } = useGetInsuranceApplication(sessionId);
-  const [activeTab, setActiveTab] = useState('information')
+  const [activeTab, setActiveTab] = useState('information');
+  const { isAdmin } = useAuth();
 
   if (isLoadingApplication) return <Loading />;
+
+  function handleShareWhatsApp() {
+    if (!application) return;
+
+    const startDate = application?.startDate ? format(new Date(application.startDate), 'dd MMM yyyy') : '-';
+    const endDate = application?.endDate ? format(new Date(application.endDate), 'dd MMM yyyy') : '-';
+
+    const passengers = application?.passengers?.length
+      ? application.passengers.map((p, i) => `Passenger ${i + 1}: ${p.firstName} ${p.lastName} • ${p.nationality}`)
+      : ['Passengers: -'];
+
+    const message = `
+Insurance Application
+Name: ${application?.leadPassenger || '-'}
+Email: ${application?.email || '-'}
+Mobile: ${application?.mobile?.code || ''}-${application?.mobile?.digits || ''}
+
+Journey: ${capitalCase(application?.journeyType || '')}
+Region: ${application?.region?.name || '-'}
+Dates: ${startDate} → ${endDate}
+
+${passengers.join('\n')}
+
+Policy #: ${application?.policyNumber || 'Pending'}
+Payment: ${application?.paymentStatus || '-'}
+${isAdmin ? `Amount: ${application?.amountPaid?.currency || ''} ${application?.amountPaid?.amount || ''}` : ''}
+    `.trim();
+
+    const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    const opened = window.open(url, '_blank', 'noopener,noreferrer');
+    if (!opened) window.location.href = url;
+  }
 
   return (
     <div>
@@ -40,51 +73,66 @@ export default function InsuranceApplicationDetail() {
         <div>
           <ActionButtons
             actions={[
-              { text: 'Share on WhatsApp', icon: MdWhatsapp, onClick: () => console.log('whatsapp') },
-              { text: 'Refund', icon: Undo, onClick: () => console.log('refund') },
+              { text: 'Share on WhatsApp', icon: MdWhatsapp, onClick: handleShareWhatsApp },
+              ...(isAdmin
+                ? [
+                    {
+                      text: 'Refund',
+                      icon: Undo,
+                      onClick: () => toast.error('Refund not implemented yet'),
+                    },
+                  ]
+                : []),
             ]}
           />
         </div>
       </div>
 
-      <div className='flex items-center gap-3'>
-        {[{label: 'Information', value: 'information'}, {label: 'Documents', value: 'documents'}].map((item, i) => (
-            <button
+      <div className="flex items-center gap-3">
+        {[
+          { label: 'Information', value: 'information' },
+          { label: 'Documents', value: 'documents' },
+        ].map((item, i) => (
+          <button
             className={`font-light text-[12px] px-4 py-2 shadow-sm rounded-md cursor-pointer duration-200 ${activeTab === item.value ? 'bg-primary-500 text-white' : 'bg-white hover:bg-primary-50'}`}
             onClick={() => setActiveTab(item.value)}
-            >
-              {item.label}
-            </button>
+          >
+            {item.label}
+          </button>
         ))}
       </div>
 
       {activeTab === 'information' && (
         <>
-          <BasicInfo application={application} />
+          <BasicInfo application={application} isAdmin={isAdmin} />
           <TripDetails application={application} />
           <Passengers application={application} />
         </>
       )}
 
-      {activeTab === 'documents' && (
-        <Documents policyId={application.policyId} />
-      )}
+      {activeTab === 'documents' && <Documents policyId={application.policyId} />}
     </div>
   );
 }
 
-function BasicInfo({ application }) {
+function BasicInfo({ application, isAdmin }) {
   return (
     <div className="bg-white px-6 py-4 rounded-lg shadow-sm grid grid-cols-3 gap-x-6 gap-y-6 mt-6 text-sm">
-      <Info label="Submitted" value={`${convertToDubaiDate(application?.createdAt)} ${convertToDubaiTime(application?.createdAt)}`} />
+      <Info
+        label="Submitted"
+        value={`${convertToDubaiDate(application?.createdAt)} ${convertToDubaiTime(application?.createdAt)}`}
+      />
       <Info label="Lead Passenger" value={application?.leadPassenger} />
       <Info label="Email" value={application?.email} />
       <Info label="Phone" value={`${application?.mobile?.code}-${application?.mobile?.digits}`} />
       <Info label="Journey" value={capitalCase(application?.journeyType)} />
       <Info label="Region" value={application?.region?.name} />
-      <Info label="Travel Dates" value={`${format(new Date(application?.startDate), 'dd MMM')} → ${format(new Date(application?.endDate), 'dd MMM')}`} />
+      <Info
+        label="Travel Dates"
+        value={`${format(new Date(application?.startDate), 'dd MMM')} → ${format(new Date(application?.endDate), 'dd MMM')}`}
+      />
       <Info label="Policy #" value={application?.policyNumber} />
-      <Info label="Amount" value={`${application?.amountPaid?.currency} ${application?.amountPaid?.amount}`} />
+      {isAdmin && <Info label="Amount" value={`${application?.amountPaid?.currency} ${application?.amountPaid?.amount}`} />}
       <Info label="Payment" value={application?.paymentStatus} />
     </div>
   );
@@ -109,24 +157,20 @@ function Passengers({ application }) {
       <SectionHeading>Passengers</SectionHeading>
       <div className="grid grid-cols-2 gap-x-6 gap-y-6 mt-2">
         {application?.passengers?.map((p, i) => (
-          <Info
-            key={i}
-            label={`Passenger ${i + 1}`}
-            value={`${p.firstName} ${p.lastName} • ${p.nationality} • ${p.passport}`}
-          />
+          <Info key={i} label={`Passenger ${i + 1}`} value={`${p.firstName} ${p.lastName} • ${p.nationality} • ${p.passport}`} />
         ))}
       </div>
     </div>
   );
 }
 
-function Documents({ policyId }){
-  const { downloadPolicy } = useDownloadInsurancePolicy()
+function Documents({ policyId }) {
+  const { downloadPolicy } = useDownloadInsurancePolicy();
 
-  return(
+  return (
     <div className="bg-white px-6 py-4 rounded-lg shadow-sm mt-4 text-sm">
       <SectionHeading>Documents</SectionHeading>
-      <div className='grid grid-cols-3 gap-4'>
+      <div className="grid grid-cols-3 gap-4">
         <PrimaryButton onClick={() => downloadPolicy({ policyId, index: 0 })}>Download Certificate of Insurance</PrimaryButton>
         <PrimaryButton onClick={() => downloadPolicy({ policyId, index: 1 })}>Download Policy Wording</PrimaryButton>
         <PrimaryButton onClick={() => downloadPolicy({ policyId, index: 2 })}>Download Policy Wording (Arabic)</PrimaryButton>
@@ -134,7 +178,7 @@ function Documents({ policyId }){
         <PrimaryButton onClick={() => downloadPolicy({ policyId, index: 4 })}>Policy Tax Invoice</PrimaryButton>
       </div>
     </div>
-  )
+  );
 }
 
 // function Actions({ application }) {

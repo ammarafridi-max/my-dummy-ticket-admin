@@ -1,9 +1,9 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
 import AppLayout from '../layouts/AppLayout';
-import Dashboard from '../pages/Dashboard';
+import Dashboard from './Dashboard';
 import Login from '../features/auth/pages/Login';
-import NotFound from '../pages/NotFound';
+import NotFound from './NotFound';
 
 // Dummy Ticket Routes
 import DummyTickets from '../features/dummy-tickets/pages/DummyTickets';
@@ -11,8 +11,8 @@ import DummyTicketDetail from '../features/dummy-tickets/pages/DummyTicketDetail
 import SendEmail from '../features/dummy-tickets/pages/SendEmail';
 
 // Protection Routes
-import ProtectedRoute from '../pages/ProtectedRoute';
-import AdminRoute from '../pages/AdminRoute';
+import ProtectedRoute from './ProtectedRoute';
+import AdminRoute from './AdminRoute';
 
 // Users
 import Users from '../features/users/pages/Users';

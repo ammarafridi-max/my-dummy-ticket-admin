@@ -7,13 +7,13 @@ export function useDeleteDummyTicket() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { mutate: deleteDummyTicket, isLoading: isDeleting } = useMutation({
-    mutationFn: deleteDummyTicketApi,
+    mutationFn: (sessionId) => deleteDummyTicketApi(sessionId),
     onSuccess: () => {
       toast.success('Dummy Ticket deleted successfully');
       queryClient.removeQueries({ queryKey: ['dummytickets'], exact: false });
       queryClient.removeQueries({ queryKey: ['dummyticket'], exact: false });
       setTimeout(() => {
-        navigate(-1);
+        navigate('/dummy-tickets');
       }, 2000);
     },
     onError: () => {

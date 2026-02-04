@@ -1,12 +1,12 @@
 import { BACKEND } from '../../../config';
-import { apiFetch } from '../../../utils/apiClient';
+import { apiFetch } from '../../../services/apiClient';
 
 const URL = `/api/insurance`;
 
 export async function getInsuranceApplicationsApi(params = {}) {
   const queryString = new URLSearchParams(params).toString();
 
-  const res = await fetch(`${BACKEND}${URL}`, {
+  const res = await fetch(`${BACKEND}${URL}?${queryString}`, {
     credentials: 'include',
   });
 
@@ -20,27 +20,7 @@ export async function getInsuranceApplicationsApi(params = {}) {
 }
 
 export async function getInsuranceApplicationApi(sessionId) {
-  return await apiFetch(`${URL}/${sessionId}`, {
-    credentials: 'include',
-  });
-}
-
-export async function updateInsuranceApplicationApi({ sessionId, orderStatus }) {
-  return await apiFetch(`${URL}/${sessionId}/updateOrderStatus`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ orderStatus }),
-    credentials: 'include',
-  });
-}
-
-export async function deleteInsuranceApplicationApi(id) {
-  return await apiFetch(`${URL}/${id}`, {
-    method: 'DELETE',
-    credentials: 'include',
-  });
+  return await apiFetch(`${URL}/${sessionId}`);
 }
 
 export async function downloadInsurancePolicyApi({ policyId, index }) {

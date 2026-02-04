@@ -13,7 +13,7 @@ export function useGetDummyTicket(sessionId) {
   });
 
   return {
-    dummyTicket: data?.data,
+    dummyTicket: data,
     isLoadingDummyTicket,
     isErrorDummyTicket,
   };

@@ -9,6 +9,7 @@ export function useUpdateDummyTicket() {
     onSuccess: () => {
       toast.success('Dummy ticket updated successfully.');
       queryClient.invalidateQueries({ queryKey: ['dummytickets'] });
+      queryClient.invalidateQueries({ queryKey: ['dummyticket'] });
     },
     onError: () => {
       toast.error('An error occurred.');

@@ -4,7 +4,6 @@ import { useSearchParams } from 'react-router-dom';
 
 export function useDummyTickets() {
   const [searchParams] = useSearchParams();
-
   const params = Object.fromEntries([...searchParams]);
 
   const {
@@ -14,13 +13,13 @@ export function useDummyTickets() {
   } = useQuery({
     queryKey: ['dummytickets', params],
     queryFn: () => getDummyTicketsApi(params),
-    refetchOnMount: 'always',
-    keepPreviousData: true, // 👈 smoother pagination
+    keepPreviousData: true,
   });
 
   return {
     dummyTickets: data?.data,
     pagination: data?.pagination,
+    results: data?.results,
     isLoadingDummyTickets,
     isErrorDummyTickets,
   };

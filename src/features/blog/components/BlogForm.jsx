@@ -1,5 +1,4 @@
 import { capitalCase } from 'change-case';
-import { useDeleteBlog } from '../hooks/useDeleteBlog';
 import { format } from 'date-fns';
 import FormRow from '../../../components/FormElements/FormRow';
 import Input from '../../../components/FormElements/Input';
@@ -8,40 +7,57 @@ import Label from '../../../components/FormElements/Label';
 import CheckboxGroup from '../../../components/FormElements/CheckboxGroup';
 import UploadFile from '../../../components/FormElements/UploadFile';
 import TinyEditor from '../../../components/TinyEditor';
-import PrimaryButton from '../../../components/PrimaryButton';
-import DeleteButton from '../../../components/DeleteButton';
 
-export default function BlogForm({ blog, editorRef, register, control, handleSubmit, onSubmit, isLoading = false }) {
-  const { deleteBlog, isDeletingBlog } = useDeleteBlog();
-
+export default function BlogForm({
+  blog,
+  editorRef,
+  register,
+  control,
+  handleSubmit,
+  onSubmit,
+  isLoading = false,
+  readOnly = false,
+}) {
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 lg:grid-cols-[8fr_3fr] gap-6 mt-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="mt-6">
       <div className="bg-white rounded-xl shadow p-8 space-y-8">
+        {blog && (
+          <section className="space-y-4">
+            <h2 className="text-2xl font-normal text-gray-800 pb-2">Post Overview</h2>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-sm">
+              <Info label="Created" value={format(blog.createdAt, 'dd MMM yyyy • hh:mm aa')} />
+              <Info label="Updated" value={format(blog.updatedAt, 'dd MMM yyyy • hh:mm aa')} />
+              <Info label="Published" value={blog.publishedAt ? format(blog.publishedAt, 'dd MMM yyyy • hh:mm aa') : '-'} />
+              <Info label="Status" value={capitalCase(blog.status || '-')} />
+            </div>
+          </section>
+        )}
+
         <section className="space-y-4">
-          <h2 className="text-2xl font-medium text-gray-800 pb-2">SEO Settings</h2>
+          <h2 className="text-2xl font-normal text-gray-800 pb-2">SEO Settings</h2>
 
           <FormRow>
             <Label>Meta Title</Label>
-            <Input type="text" {...register('metaTitle')} />
+            <Input type="text" {...register('metaTitle')} readOnly={readOnly} disabled={readOnly} />
           </FormRow>
 
           <FormRow>
             <Label>Meta Description</Label>
-            <Textarea rows={2} {...register('metaDescription')} />
+            <Textarea rows={2} {...register('metaDescription')} readOnly={readOnly} disabled={readOnly} />
           </FormRow>
         </section>
 
         <section className="space-y-4">
-          <h2 className="text-2xl font-medium text-gray-800 pb-2">Blog Details</h2>
+          <h2 className="text-2xl font-normal text-gray-800 pb-2">Blog Details</h2>
 
           <FormRow>
             <Label>Title</Label>
-            <Input type="text" {...register('title')} />
+            <Input type="text" {...register('title')} readOnly={readOnly} disabled={readOnly} />
           </FormRow>
 
           <FormRow>
             <Label>Slug</Label>
-            <Input type="text" {...register('slug')} />
+            <Input type="text" {...register('slug')} readOnly={readOnly} disabled={readOnly} />
           </FormRow>
 
           <FormRow>
@@ -53,13 +69,19 @@ export default function BlogForm({ blog, editorRef, register, control, handleSub
                   <p className="text-xs text-gray-500 mt-1">Upload a new image to replace the current one</p>
                 </div>
               )}
-              <UploadFile {...register('coverImage')} />
+              <UploadFile {...register('coverImage')} disabled={readOnly} />
             </div>
           </FormRow>
 
           <FormRow>
             <Label>Excerpt</Label>
-            <Textarea rows={3} {...register('excerpt')} placeholder="A short summary of the blog..." />
+            <Textarea
+              rows={3}
+              {...register('excerpt')}
+              placeholder="A short summary of the blog..."
+              readOnly={readOnly}
+              disabled={readOnly}
+            />
           </FormRow>
 
           <FormRow>
@@ -67,6 +89,7 @@ export default function BlogForm({ blog, editorRef, register, control, handleSub
             <CheckboxGroup
               name="tags"
               control={control}
+              disabled={readOnly}
               options={[
                 { value: 'dummyTicket', label: 'Dummy Ticket' },
                 { value: 'schengenVisa', label: 'Schengen Visa' },
@@ -77,72 +100,19 @@ export default function BlogForm({ blog, editorRef, register, control, handleSub
         </section>
 
         <section className="space-y-4">
-          <h2 className="text-2xl font-medium text-gray-800 pb-2">Content</h2>
-
-          <TinyEditor editorRef={editorRef} initialValue={blog?.content} />
+          <h2 className="text-2xl font-normal text-gray-800 pb-2">Content</h2>
+          <TinyEditor editorRef={editorRef} initialValue={blog?.content} disabled={readOnly} />
         </section>
       </div>
-
-      <aside className="bg-white h-fit rounded-xl shadow p-6 space-y-5">
-        {blog?.createdAt && (
-          <div className="leading-6 text-gray-600">
-            <p className="font-normal">Created:</p>
-            <p className="text-sm font-extralight">{format(blog.createdAt, 'dd MMM yyyy • hh:mm aa')}</p>
-          </div>
-        )}
-
-        {blog?.updatedAt && (
-          <div className="leading-6 text-gray-600">
-            <p className="font-normal">Last Updated:</p>
-            <p className="text-sm font-extralight">{format(blog.updatedAt, 'dd MMM yyyy • hh:mm aa')}</p>
-          </div>
-        )}
-
-        {blog?.publishedAt && (
-          <div className="leading-6 text-gray-600">
-            <p className="font-normal">Published:</p>
-            <p className="text-sm font-extralight">{format(blog.publishedAt, 'dd MMM yyyy • hh:mm aa')}</p>
-          </div>
-        )}
-
-        {blog?.status && (
-          <div className="leading-6 text-gray-600">
-            <p className="font-normal">Status:</p>
-            <p className="text-sm font-extralight">{capitalCase(blog.status)}</p>
-          </div>
-        )}
-
-        <div className="grid grid-cols-2 gap-3">
-          {blog ? (
-            <DeleteButton
-              onClick={() => {
-                if (window.confirm('Are you sure you want to delete this blog? This action cannot be undone.')) {
-                  deleteBlog(blog._id);
-                }
-              }}
-              disabled={isDeletingBlog || isLoading}
-            >
-              Delete
-            </DeleteButton>
-          ) : (
-            <div></div>
-          )}
-
-          {blog?.status === 'draft' || blog?.status === 'archive' ? (
-            <PrimaryButton type="submit" disabled={isLoading || isDeletingBlog} className="px-6">
-              Publish
-            </PrimaryButton>
-          ) : blog?.status === 'published' ? (
-            <PrimaryButton type="submit" disabled={isLoading || isDeletingBlog} className="px-6">
-              Update
-            </PrimaryButton>
-          ) : (
-            <PrimaryButton type="submit" disabled={isLoading || isDeletingBlog} className="px-6">
-              Save
-            </PrimaryButton>
-          )}
-        </div>
-      </aside>
     </form>
+  );
+}
+
+function Info({ label, value }) {
+  return (
+    <div className="flex flex-col">
+      <span className="font-extralight text-sm text-gray-500">{label}</span>
+      <span className="font-light text-lg truncate">{value || '-'}</span>
+    </div>
   );
 }

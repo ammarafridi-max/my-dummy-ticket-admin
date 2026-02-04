@@ -10,7 +10,9 @@ export default function CreateUser() {
   const { createUser, isCreating } = useCreateUser();
 
   function onSubmit(data) {
-    createUser(data);
+    const payload = { ...data };
+    delete payload.passwordConfirm;
+    createUser(payload);
   }
 
   return (

@@ -48,7 +48,7 @@ export default function UpdateUser() {
         paths={[
           { label: 'Home', href: '/' },
           { label: 'Users', href: '/users' },
-          { label: 'Update User', href: '/users/create' },
+          { label: 'Update User', href: `/users/${username}` },
         ]}
       />
       <PageHeading>Update User</PageHeading>

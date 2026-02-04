@@ -33,14 +33,14 @@ export default function DummyTickets() {
       <Helmet>
         <title>Dummy Tickets</title>
       </Helmet>
-      <div className='flex items-center justify-between gap-5'>
+      <div className="flex items-center justify-between gap-5">
         <div>
           <Breadcrumb
             paths={[
               { label: 'Home', href: '/' },
               { label: 'Dummy Tickets', href: '/dummy-tickets' },
             ]}
-            />
+          />
           <PageHeading mb="15px">Dummy Tickets</PageHeading>
         </div>
         <div></div>
@@ -78,28 +78,16 @@ export default function DummyTickets() {
                   {item?.ticketDelivery?.immediate ? 'Immediate' : convertToDubaiDate(item?.ticketDelivery?.deliveryDate)}
                 </Table.Item>
 
-                <Table.Item>{item?.handledBy?.name.split(' ')[0]}</Table.Item>
+                <Table.Item>{item?.handledBy?.name ? item.handledBy.name.split(' ')[0] : '-'}</Table.Item>
                 <Table.Item>
-                  {item?.paymentStatus === 'PAID' ? (
-                    <SuccessPill width="auto">
-                      <span>PAID</span>
-                    </SuccessPill>
-                  ) : item?.paymentStatus === 'UNPAID' ? (
-                    <NeutralPill width="auto">UNPAID</NeutralPill>
-                  ) : (
-                    ''
-                  )}
+                  {item?.paymentStatus === 'PAID' && <SuccessPill>PAID</SuccessPill>}
+                  {item?.paymentStatus === 'UNPAID' && <NeutralPill>UNPAID</NeutralPill>}
+                  {item?.paymentStatus === 'REFUNDED' && <DangerPill>REFUNDED</DangerPill>}
                 </Table.Item>
                 <Table.Item>
-                  {item?.orderStatus === 'PENDING' ? (
-                    <DangerPill width="auto">{item?.orderStatus}</DangerPill>
-                  ) : item?.orderStatus === 'DELIVERED' ? (
-                    <SuccessPill width="auto">{item?.orderStatus}</SuccessPill>
-                  ) : item?.orderStatus === 'PROGRESS' ? (
-                    <WarningPill width="auto">{item?.orderStatus}</WarningPill>
-                  ) : (
-                    ''
-                  )}
+                  {item?.orderStatus === 'PENDING' && <DangerPill>PENDING</DangerPill>}
+                  {item?.orderStatus === 'DELIVERED' && <SuccessPill>DELIVERED</SuccessPill>}
+                  {item?.orderStatus === 'PROGRESS' && <WarningPill>PROGRESS</WarningPill>}
                 </Table.Item>
               </Table.Row>
             </React.Fragment>

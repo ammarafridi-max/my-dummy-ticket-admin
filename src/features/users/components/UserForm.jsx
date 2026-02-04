@@ -7,6 +7,8 @@ import Label from '../../../components/FormElements/Label';
 import Select from '../../../components/FormElements/Select';
 import PrimaryButton from '../../../components/PrimaryButton';
 import DeleteButton from '../../../components/DeleteButton';
+import { confirmAlert } from 'react-confirm-alert';
+import toast from 'react-hot-toast';
 
 export default function UserForm({ user, register, handleSubmit, onSubmit, watch, isLoading }) {
   const { username } = useParams();
@@ -107,7 +109,26 @@ export default function UserForm({ user, register, handleSubmit, onSubmit, watch
             Submit
           </PrimaryButton>
           {user && (
-            <DeleteButton type="button" disabled={isLoading || isDeleting} onClick={() => deleteUser(username)}>
+            <DeleteButton
+              type="button"
+              disabled={isLoading || isDeleting}
+              onClick={() => {
+                confirmAlert({
+                  title: 'Confirm to delete',
+                  message: 'Are you sure you want to delete this user? This action cannot be undone.',
+                  buttons: [
+                    {
+                      label: 'Delete',
+                      onClick: () => deleteUser(username),
+                    },
+                    {
+                      label: 'Cancel',
+                      onClick: () => toast.error('Delete cancelled'),
+                    },
+                  ],
+                });
+              }}
+            >
               Delete User
             </DeleteButton>
           )}

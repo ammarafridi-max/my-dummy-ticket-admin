@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useAuth } from '../../../context/AuthContext'
+import { useAuth } from '../../../context/AuthContext';
 import { capitalCase } from 'change-case';
 import { useGetDummyTicket } from '../hooks/useGetDummyTicket';
 import { useSendEmail } from '../hooks/useSendEmail';
-import { useUpdateDummyTicket } from '../hooks/useUpdateDummyTicket';
 import toast from 'react-hot-toast';
 import FormRow from '../../../components/FormElements/FormRow';
 import Input from '../../../components/FormElements/Input';
@@ -30,9 +29,8 @@ function generateEmailTemplate(templateName) {
 
 export default function MDTSendEmail() {
   const [searchParams] = useSearchParams();
-  const sessionId = searchParams.get('sessionId')
+  const sessionId = searchParams.get('sessionId');
   const { user } = useAuth();
-  const { updateDummyTicket, isUpdatingDummyTicket } = useUpdateDummyTicket();
   const { dummyTicket, isLoadingDummyTicket } = useGetDummyTicket(sessionId);
   const { sendEmail, isSendingEmail } = useSendEmail();
   
@@ -41,20 +39,20 @@ export default function MDTSendEmail() {
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
   const [reservation, setReservation] = useState(null);
-  const [leadPassenger, setLeadPassenger] = useState('')
+  const [leadPassenger, setLeadPassenger] = useState('');
   
-  const btnDisabled = !email || !subject || !body || !reservation?.name || isLoadingDummyTicket || isUpdatingDummyTicket
+  const btnDisabled = !email || !subject || !body || !reservation?.name || isLoadingDummyTicket || isSendingEmail;
 
   useEffect(() => {
-    if (dummyTicket?.email) setEmail(dummyTicket.email)
-  }, [dummyTicket, email])
+    if (dummyTicket?.email) setEmail(dummyTicket.email);
+  }, [dummyTicket]);
 
   useEffect(() => {
-    if (dummyTicket?.leadPassenger) setLeadPassenger(dummyTicket?.leadPassenger || '')
-  }, [dummyTicket])
+    if (dummyTicket?.leadPassenger) setLeadPassenger(dummyTicket?.leadPassenger || '');
+  }, [dummyTicket]);
 
   useEffect(() => {
-    const templateName = searchParams.get('template')
+    const templateName = searchParams.get('template');
     if (templateName) {
       const { subject, body } = generateEmailTemplate(templateName);
       const updatedBody = body
@@ -68,7 +66,7 @@ export default function MDTSendEmail() {
   function handleSubmit(e) {
     e.preventDefault();
 
-    if ((!email, !subject, !body)) return toast.error('Please fill the email, subject, and body fields');
+    if (!email || !subject || !body) return toast.error('Please fill the email, subject, and body fields');
 
     if (!reservation?.name) return toast.error('Please attach a reservation file');
 
@@ -80,9 +78,7 @@ export default function MDTSendEmail() {
       formData.append('reservation', reservation);
     }
 
-    if (sendEmail(formData)) {
-      updateDummyTicket({ sessionId, orderStatus: 'DELIVERED' })
-    }
+    sendEmail(formData);
   }
 
   if (isLoadingDummyTicket || isSendingEmail) return <Loading />;

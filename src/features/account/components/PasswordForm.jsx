@@ -5,8 +5,8 @@ import FormRow from '../../../components/FormElements/FormRow';
 import Label from '../../../components/FormElements/Label';
 import Input from '../../../components/FormElements/Input';
 import SectionHeading from '../../../components/SectionHeading';
-import PrimaryButton from '../../../components/Buttons/PrimaryButton';
-import LinkButton from '../../../components/Buttons/LinkButton';
+import PrimaryButton from '../../../components/PrimaryButton';
+import LinkButton from '../../../components/LinkButton';
 
 const Container = styled.div`
   margin-top: 80px;
@@ -19,13 +19,16 @@ const BtnRow = styled.div`
 `;
 
 export default function PasswordForm() {
-  const { updatePassword, isLoading } = useUpdateMyPassword();
+  const { updatePassword, isUpdating } = useUpdateMyPassword();
 
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm();
+
+  const password = watch('password');
 
   function onSubmit(data) {
     const { passwordCurrent, password, passwordConfirm } = data;
@@ -71,7 +74,7 @@ export default function PasswordForm() {
             <p>{errors?.passwordConfirm?.message}</p>
           </FormRow>
           <BtnRow>
-            <PrimaryButton type="submit" disabled={isLoading}>
+            <PrimaryButton type="submit" disabled={isUpdating}>
               Update
             </PrimaryButton>
             <LinkButton type="button">Forgot Password?</LinkButton>

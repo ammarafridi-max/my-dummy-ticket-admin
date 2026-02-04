@@ -1,4 +1,4 @@
-import { apiFetch } from '../../../utils/apiClient';
+import { apiFetch } from '../../../services/apiClient';
 
 const URL = '/api/users/me';
 

@@ -7,10 +7,7 @@ export function useDeleteUser(username) {
   const navigate = useNavigate();
   const { mutate: deleteUser, isLoading: isDeleting } = useMutation({
     mutationKey: ['user'],
-    mutationFn: () => {
-      confirm('Are you sure you want to delete this user?');
-      deleteUserApi(username);
-    },
+    mutationFn: () => deleteUserApi(username),
     onSuccess: () => {
       toast.success('User deleted successfully!');
       navigate('/users');

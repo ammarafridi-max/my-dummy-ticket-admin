@@ -12,18 +12,13 @@ export function useInsuranceApplications() {
     isError: isErrorApplications,
   } = useQuery({
     queryKey: ['insuranceApplications', params],
-    queryFn: () => {
-      const qs = new URLSearchParams(params).toString();
-      return getInsuranceApplicationsApi(qs);
-    },
+    queryFn: () => getInsuranceApplicationsApi(params),
     refetchOnMount: 'always',
     keepPreviousData: true,
   });
 
-  console.log(data);
-
   return {
-    applications: data,
+    applications: data?.data,
     pagination: data?.pagination,
     isLoadingApplications,
     isErrorApplications,

@@ -1,61 +1,50 @@
-import { BACKEND } from '../../../config';
-import { apiFetch } from '../../../utils/apiClient';
+import { apiFetch } from '../../../services/apiClient';
+
+const URL = '/api/ticket';
 
 export async function getDummyTicketsApi(params = {}) {
   const queryString = new URLSearchParams(params).toString();
-  const res = await fetch(`${BACKEND}/api/ticket?${queryString}`, {
-    credentials: 'include',
-  });
+  const result = await apiFetch(`${URL}?${queryString}`);
 
-  if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.message);
-  }
-
-  const json = await res.json();
-
-  return json;
+  return {
+    data: result.data,
+    pagination: result.pagination,
+    results: result.results,
+  };
 }
 
 export async function getDummyTicketApi(sessionId) {
-  const res = await fetch(`${BACKEND}/api/ticket/${sessionId}`, {
-    credentials: 'include',
-  });
-
-  if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.message);
-  }
-
-  const json = await res.json();
-
-  return json;
+  const result = await apiFetch(`${URL}/${sessionId}`);
+  return result;
 }
 
 export async function updateDummyTicketApi({ sessionId, orderStatus }) {
-  const res = await fetch(`${BACKEND}/api/ticket/${sessionId}/updateOrderStatus`, {
+  const result = await apiFetch(`${URL}/${sessionId}/status`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ userId, orderStatus }),
-    credentials: 'include',
+    body: JSON.stringify({ orderStatus }),
   });
 
-  const data = await res.json();
+  return result;
 }
 
 export async function deleteDummyTicketApi(sessionId) {
-  const res = await fetch(`${BACKEND}/api/ticket/${sessionId}`, {
+  await apiFetch(`${URL}/${sessionId}`, {
     method: 'DELETE',
-    credentials: 'include',
   });
 
-  const data = await res.json();
+  return true;
+}
 
-  if (data.status === 'success') {
-    return data.message;
-  } else {
-    throw new Error(data.message || 'Failed to delete dummy ticket');
-  }
+export async function refundDummyTicketApi(transactionId) {
+  const result = await apiFetch(`${URL}/${transactionId}/refund`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  console.log(result);
+
+  return result;
 }
